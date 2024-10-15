@@ -46,8 +46,8 @@ docker build --build-arg ARCH=arm64 -t carize:latest .
 **Run the utility container**
 ```
 docker run --rm \
-    -v /data:.cartesi/image \
-    -v /output:. \
+    -v .cartesi/image:/data \
+    -v .:/output \
     carize:latest /carize
 ```
 ## Uploading CAR files to W3.Storage
