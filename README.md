@@ -12,7 +12,7 @@ Install globally via npm
 npm i -g nonodo
 ```
 2. **Cartesi Machine**  
-Download the [Cartesi Machine image](https://github.com/edubart/cartesi-machine-everywhere/releases) for your OS and add the `bin/` folder to your PATH:
+Download the [Cartesi Machine image](https://github.com/edubart/cartesi-machine-everywhere/releases/tag/v0.18.1-rc6) for your OS and add the `bin/` folder to your PATH:
 ```bash
 export PATH="/path/to/cartesi-machine/bin:$PATH"
 ```
