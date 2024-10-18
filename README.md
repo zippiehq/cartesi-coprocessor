@@ -85,11 +85,17 @@ Replace cid, machine_hash, and size with your actual value
 forge --version
 ```
 If you haven't installed Foundry yet, refer back to the installation step above
-### navigate to contacts
+### clone the Foundry Template Repository
+template repository contains the ICoprocessor.sol interface and sample contract:
 ```
-cd /path/to/contracts
+git clone https://github.com/nyakiomaina/cartesi-coprocessor-template.git
+cd cartesi-coprocessor-template
 ```
-### compile the contacts
+### get dependencies
+```
+forge install
+```
+### build contract
 ```
 forge build
 ```
