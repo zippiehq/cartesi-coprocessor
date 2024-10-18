@@ -20,6 +20,14 @@ export PATH="/path/to/cartesi-machine/bin:$PATH"
 ```
 npm install -g @web3-storage/w3cli
 ```
+4. **Install foundry**
+```
+curl -L https://foundry.paradigm.xyz | bash
+```
+- follow instructions from the output before not installing foundry by running the command
+```
+foundryup
+```
 ## Development
 1. **Start NoNodo**:
 ```bash
@@ -63,3 +71,26 @@ w3 space create preferredSpaceName
 ```
 w3 up --car /output/output.car
 ```
+
+## Ensure coprocessor has your program
+**Using the ```/ensure``` api**
+```
+curl -X POST "http://lambada.tspre.org/ensure/<cid>/<machine_hash>/<size>"
+```
+Replace cid, machine_hash, and size with your actual value
+
+## Foundry set up to interact with the coprocessor
+### confirm foundry installation
+```
+forge --version
+```
+If you haven't installed Foundry yet, refer back to the installation step above
+### navigate to contacts
+```
+cd /path/to/contracts
+```
+### compile the contacts
+```
+forge build
+```
+
