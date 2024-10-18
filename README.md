@@ -24,7 +24,7 @@ npm install -g @web3-storage/w3cli
 ```
 curl -L https://foundry.paradigm.xyz | bash
 ```
-- follow instructions from the output before not installing foundry by running the command
+- follow instructions from the output before installing foundry by running the command
 ```
 foundryup
 ```
