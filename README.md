@@ -77,7 +77,7 @@ w3 up --car /output/output.car
 ```
 curl -X POST "http://lambada.tspre.org/ensure/<cid>/<machine_hash>/<size>"
 ```
-Replace cid, machine_hash, and size with your actual value
+Replace cid, machine_hash, and size with your actual value which is the output from the carize. Check output.car.json file
 
 ## Foundry set up to interact with the coprocessor
 ### confirm foundry installation
