@@ -49,7 +49,7 @@ clone and build the docker image
 ```bash
 git clone https://github.com/nyakiomaina/carize.git
 cd carize
-docker build --build-arg ARCH=arm64 -t carize:latest .
+docker build -t carize:latest .
 ```
 **Run the utility container**
 ```
@@ -75,7 +75,7 @@ w3 up --car /output/output.car
 ## Ensure coprocessor has your program
 **Using the ```/ensure``` api**
 ```
-curl -X POST "http://lambada.tspre.org/ensure/<cid>/<machine_hash>/<size>"
+cucurl -X POST "http://lambada.tspre.org/ensure/$CID/$MACHINE_HASH/$SIZE"
 ```
 Replace cid, machine_hash, and size with your actual value which is the output from the carize. Check output.car.json file
 
