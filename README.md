@@ -73,11 +73,21 @@ w3 up --car /output/output.car
 ```
 
 ## Ensure coprocessor has your program
-**Using the ```/ensure``` api**
+Using the ```/ensure``` api
+
+Set the variables by reading the values from the output files generated after running ```carize.sh``` script:
 ```
-cucurl -X POST "http://lambada.tspre.org/ensure/$CID/$MACHINE_HASH/$SIZE"
+CID=$(cat output.cid)
+SIZE=$(cat output.dagsize)
+MACHINE_HASH=<machine_hash>
 ```
-Replace cid, machine_hash, and size with your actual value which is the output from the carize. Check output.car.json file
+(Replace <machine_hash> with your actual machine hash value.)
+
+Now, use the variables in the curl command:
+
+```
+curl -X POST "http://lambada.tspre.org/ensure/$CID/$MACHINE_HASH/$SIZE"
+```
 
 ## Foundry set up to interact with the coprocessor
 ### confirm foundry installation
