@@ -79,14 +79,12 @@ Set the variables by reading the values from the output files generated after ru
 ```
 CID=$(cat output.cid)
 SIZE=$(cat output.dagsize)
-MACHINE_HASH=<machine_hash>
+MACHINE_HASH=$(xxd -p ../.cartesi/image/hash | tr -d '\n')
 ```
-(Replace <machine_hash> with your actual machine hash value.)
-
 Now, use the variables in the curl command:
 
 ```
-curl -X POST "http://lambada.tspre.org/ensure/$CID/$MACHINE_HASH/$SIZE"
+curl -X POST "https://cartesi-coprocessor-solver.fly.dev/ensure/$CID/$MACHINE_HASH/$SIZE"
 ```
 
 ## Foundry set up to interact with the coprocessor
