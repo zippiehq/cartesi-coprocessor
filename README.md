@@ -1,110 +1,129 @@
-# Cartesi-Coprocessor-SDK(Python-tutorial)
+# Cartesi Coprocessor SDK (Python Tutorial)
 
 ## Prerequisites
-- **NoNodo**
-- **Cartesi Machine**
-- **Node version 18 or higher**
+- nonodo
+- Cartesi Machine
+- Node.js version 18 or higher
 
-### Install Tools
-1. **NoNodo**  
-Install globally via npm
-```bash
+## Install Tools
+1. **Install nonodo**
+Install nonodo globally via npm:
+```
 npm i -g nonodo
 ```
-2. **Cartesi Machine**  
-Download the [Cartesi Machine image](https://github.com/edubart/cartesi-machine-everywhere/releases/tag/v0.18.1-rc6) for your OS and add the `bin/` folder to your PATH:
-```bash
+2. **Install cartesi machine**
+
+Download the Cartesi Machine image for your OS from from [this link](https://github.com/edubart/cartesi-machine-everywhere/releases) and add the bin/ folder to your PATH:
+
+```
 export PATH="/path/to/cartesi-machine/bin:$PATH"
 ```
-3. **web3.storage setup**
+3. **Set up web3.storage**
+
+Install the web3.storage CLI globally:
+
 ```
 npm install -g @web3-storage/w3cli
 ```
 4. **Install foundry**
+
+Download and run the Foundry installer script:
+
 ```
 curl -L https://foundry.paradigm.xyz | bash
 ```
-- follow instructions from the output before installing foundry by running the command
+After the installation, initialize Foundry:
 ```
 foundryup
 ```
-5. **CARize utility container**
-   clone and build the docker image
-```bash
+5. **Build the CARize utility container**
+   
+Clone the CARize repository and build the Docker image:
+
+```
 git clone https://github.com/nyakiomaina/carize.git
 cd carize
 docker build -t carize:latest .
 ```
-**Run the utility container**
+## Development
+1. **Start nonodo**
+```
+nonodo
+```
+2. **Create a python cartesi dApp**
+```
+cartesi create sample-dapp --template=python -branch "wip/coprocessor"
+cd sample-dapp
+```
+3. **Build the Cartesi dApp**
+```
+cartesi build
+```
+4. **Run the cartesi machine**
+```
+cartesi-machine --network --flash-drive=label:root,filename:.cartesi/image.ext2 \
+--volume=.:/mnt --env=ROLLUP_HTTP_SERVER_URL=http://10.0.2.2:5004 --workdir=/mnt -- python dapp.py
+```
+5. **Run the CARize Utility Container**
+   
+After building your dApp, run the CARize container to generate necessary files:
+
 ```
 docker run --rm \
     -v $(pwd)/.cartesi/image:/data \
     -v $(pwd):/output \
     carize:latest /carize.sh
 ```
-## Development
-1. **Start NoNodo**:
-```bash
-nonodo
-```
-2. **Create a python Cartesi dApp**:
-```bash
-cartesi create sample-dapp --template=python -branch "wip/coprocessor"
-cd sample-dapp
-cartesi build
-```
-3. **Run the Cartesi Machine**:
-```bash
-cartesi-machine --network --flash-drive=label:root,filename:.cartesi/image.ext2 \
---volume=.:/mnt --env=ROLLUP_HTTP_SERVER_URL=http://10.0.2.2:5004 --workdir=/mnt -- python dapp.py
-```
-## Uploading CAR files to W3.Storage
-### Login to web3.storage
-```
-w3 login yourEmail@example.com
-```
-### Create a Storage Space
-```
-w3 space create preferredSpaceName
-```
-### Upload Files to Web3.Storage
-```
-w3 up --car /output.car
-```
-
-## Ensure coprocessor has your program
-Using the ```/ensure``` api
-
-Set the variables by reading the values from the output files generated after running ```carize.sh``` script:
+6. **Set environment variables**
+   
+Set the variables by reading the values from the output files generated after running the ```carize.sh``` script:
 ```
 CID=$(cat output.cid)
 SIZE=$(cat output.dagsize)
-MACHINE_HASH=$(xxd -p ../.cartesi/image/hash | tr -d '\n')
+MACHINE_HASH=$(xxd -p .cartesi/image/hash | tr -d '\n')
 ```
-Now, use the variables in the curl command:
+7. **Ensure Coprocessor has your program**
+   
+Use the ```/ensure``` API with the variables you've set:
 
 ```
 curl -X POST "https://cartesi-coprocessor-solver.fly.dev/ensure/$CID/$MACHINE_HASH/$SIZE"
 ```
+## Uploading CAR Files to Web3.Storage
+1. **Log In to web3.storage**
+```
+w3 login yourEmail@example.com
+```
+2. **Create a storage space**
+```
+w3 space create preferredSpaceName
+```
+3. **Upload files to Web3.Storage**
+```
+w3 up --car /output.car
+```
+## Foundry setup to interact with the Coprocessor
 
-## Foundry set up to interact with the coprocessor
-### confirm foundry installation
+1. **Confirm foundry installation**
 ```
 forge --version
 ```
-If you haven't installed Foundry yet, refer back to the installation step above
-### clone the Foundry Template Repository
-template repository contains the ICoprocessor.sol interface and sample contract:
+If Foundry isn't installed, refer back to the Install Foundry step.
+
+2. **Clone the foundry template repository**
+   
+This template repository contains the ICoprocessor.sol interface and a sample contract:
+
 ```
 git clone https://github.com/nyakiomaina/cartesi-coprocessor-template.git
 cd cartesi-coprocessor-template
 ```
-### get dependencies
+3. **Get dependencies**
+   
 ```
 forge install
 ```
-### build contract
+4. **Build the contract**
 ```
 forge build
 ```
-
