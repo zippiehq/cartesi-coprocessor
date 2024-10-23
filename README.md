@@ -52,7 +52,7 @@ nonodo
 ```
 2. **Create a python cartesi dApp**
 ```
-cartesi create sample-dapp --template=python -branch "wip/coprocessor"
+cartesi create sample-dapp --template=python --branch "wip/coprocessor"
 cd sample-dapp
 ```
 3. **Build the Cartesi dApp**
