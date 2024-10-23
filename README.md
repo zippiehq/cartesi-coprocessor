@@ -82,14 +82,8 @@ CID=$(cat output.cid)
 SIZE=$(cat output.dagsize)
 MACHINE_HASH=$(xxd -p .cartesi/image/hash | tr -d '\n')
 ```
-7. **Ensure Coprocessor has your program**
-   
-Use the ```/ensure``` API with the variables you've set:
 
-```
-curl -X POST "https://cartesi-coprocessor-solver.fly.dev/ensure/$CID/$MACHINE_HASH/$SIZE"
-```
-## Uploading CAR Files to Web3.Storage
+### Uploading CAR Files to Web3.Storage
 1. **Log In to web3.storage**
 ```
 w3 login yourEmail@example.com
@@ -100,7 +94,14 @@ w3 space create preferredSpaceName
 ```
 3. **Upload files to Web3.Storage**
 ```
-w3 up --car /output.car
+w3 up --car output.car
+```
+### Ensure Coprocessor has your program**
+   
+Use the ```/ensure``` API with the variables you've set:
+
+```
+curl -X POST "https://cartesi-coprocessor-solver.fly.dev/ensure/$CID/$MACHINE_HASH/$SIZE"
 ```
 ## Foundry setup to interact with the Coprocessor
 
