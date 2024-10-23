@@ -35,7 +35,7 @@ nonodo
 ```
 2. **Create a python Cartesi dApp**:
 ```bash
-cartesi create sample-dapp --template=python -b wip/coprocessor
+cartesi create sample-dapp --template=python -branch "wip/coprocessor"
 cd sample-dapp
 cartesi build
 ```
