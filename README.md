@@ -79,7 +79,7 @@ docker run --rm \
 Set the variables by reading the values from the output files generated after running the ```carize.sh``` script:
 ```
 CID=$(cat output.cid)
-SIZE=$(cat output.dagsize)
+SIZE=$(cat output.size)
 MACHINE_HASH=$(xxd -p .cartesi/image/hash | tr -d '\n')
 ```
 
