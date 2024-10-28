@@ -103,6 +103,16 @@ Use the ```/ensure``` API with the variables you've set:
 ```
 curl -X POST "https://cartesi-coprocessor-solver.fly.dev/ensure/$CID/$MACHINE_HASH/$SIZE"
 ```
+
+You can monitor outputs with ```nonodo``` by using the Inspect API
+
+```
+curl -X POST -d "test or actual payload here" http://127.0.0.1:8080/inspect
+```
+Sample Output on the Cartesi Machine
+```
+INFO:__main__:Received inspect request data {'payload': '0x74657374207061796c6f6164'}
+```
 ## Foundry setup to interact with the Coprocessor
 
 1. **Confirm foundry installation**
