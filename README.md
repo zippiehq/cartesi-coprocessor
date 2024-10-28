@@ -129,6 +129,6 @@ forge install
 forge build
 ```
 5. **Deployment**
-   ```
+```
 COPROCESSOR_ADDRESS=0xB819BA4c5d2b64d07575ff4B30d3e0Eca219BFd5 MACHINE_HASH=0x<machine_hash_here> forge script script/Deploy.s.sol:DeployScript --rpc-url --private-key --etherscan-api-key --broadcast --verify
 ```
