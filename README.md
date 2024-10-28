@@ -124,6 +124,12 @@ cd cartesi-coprocessor-template
 ```
 forge install
 ```
+Additionally, install the forge-std library
+
+```
+forge install foundry-rs/forge-std
+
+```
 4. **Build the contract**
 ```
 forge build
