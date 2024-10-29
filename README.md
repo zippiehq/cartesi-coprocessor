@@ -123,16 +123,17 @@ cartesi send
 ✔ Input (as string) hello
 ✔ Input sent: 0xa65e3f82179fac27ac9656f0ae82a4c5d0de5008c6977bbfb5ead18a01a20804
 ```
-After sending the input, you can query the outputs using the following GraphQL query:
+After sending the input, you can query both the outputs and the inputs given to them using the following GraphQL query:
 
 ```
 query notices {
-	notices {
+  notices {
     edges {
       node {
         index
         input {
           index
+          payload
         }
         payload
       }
@@ -151,7 +152,8 @@ Execute query and the output should looks like this:
           "node": {
             "index": 0,
             "input": {
-              "index": 0
+              "index": 0,
+              "payload": "0x68656c6c6f"
             },
             "payload": "0x68656c6c6f"
           }
