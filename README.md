@@ -37,7 +37,7 @@ After the installation, initialize Foundry:
 foundryup
 ```
 5. **Build the CARize utility container**
-   
+
 Clone the CARize repository and build the Docker image:
 
 ```
@@ -65,7 +65,7 @@ cartesi-machine --network --flash-drive=label:root,filename:.cartesi/image.ext2 
 --volume=.:/mnt --env=ROLLUP_HTTP_SERVER_URL=http://10.0.2.2:5004 --workdir=/mnt -- python dapp.py
 ```
 5. **Run the CARize Utility Container**
-   
+
 After building your dApp, run the CARize container to generate necessary files:
 
 ```
@@ -75,7 +75,7 @@ docker run --rm \
     carize:latest /carize.sh
 ```
 6. **Set environment variables**
-   
+
 Set the variables by reading the values from the output files generated after running the ```carize.sh``` script:
 ```
 CID=$(cat output.cid)
@@ -97,7 +97,7 @@ w3 space create preferredSpaceName
 w3 up --car output.car
 ```
 #### Ensure Coprocessor has your program
-   
+
 Use the ```/ensure``` API with the variables you've set:
 
 ```
@@ -171,15 +171,15 @@ forge --version
 If Foundry isn't installed, refer back to the Install Foundry step.
 
 2. **Clone the foundry template repository**
-   
+
 This template repository contains the ICoprocessor.sol interface and a sample contract:
 
 ```
-git clone https://github.com/nyakiomaina/cartesi-coprocessor-template.git
-cd cartesi-coprocessor-template
+git clone https://github.com/zippiehq/cartesi-coprocessor-contract-template.git
+cd cartesi-coprocessor-contract-template
 ```
 3. **Get dependencies**
-   
+
 ```
 forge install
 ```
