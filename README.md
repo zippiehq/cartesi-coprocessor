@@ -103,16 +103,65 @@ Use the ```/ensure``` API with the variables you've set:
 ```
 curl -X POST "https://cartesi-coprocessor-solver.fly.dev/ensure/$CID/$MACHINE_HASH/$SIZE"
 ```
+#### Monitor outputs
 
-You can monitor outputs with ```nonodo``` by using the Inspect API
+You can monitor the outputs using nonodo by accessing the GraphQL interface at:  http://localhost:8080/graphql
+
+run ``cartesi send`` and send a generic input, in my case, sent a string 'hello'
+
+Sample:
+```
+cartesi send
+✔ Select send sub-command Send generic input to the application.
+✔ Chain Foundry
+✔ RPC URL http://127.0.0.1:8545
+✔ Wallet Mnemonic
+✔ Mnemonic test test test test test test test test test test test junk
+✔ Account 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 9999.968655384479878868 ETH
+✔ Application address 0xab7528bb862fB57E8A2BCd567a2e929a0Be56a5e
+✔ Input String encoding
+✔ Input (as string) hello
+✔ Input sent: 0xa65e3f82179fac27ac9656f0ae82a4c5d0de5008c6977bbfb5ead18a01a20804
+```
+After sending the input, you can query the outputs using the following GraphQL query:
 
 ```
-curl -X POST -d "test or actual payload here" http://127.0.0.1:8080/inspect
+query notices {
+	notices {
+    edges {
+      node {
+        index
+        input {
+          index
+        }
+        payload
+      }
+    }
+  }
+}
 ```
-Sample Output on the Cartesi Machine
+Execute query and the output should looks like this:
+
 ```
-INFO:__main__:Received inspect request data {'payload': '0x74657374207061796c6f6164'}
+{
+  "data": {
+    "notices": {
+      "edges": [
+        {
+          "node": {
+            "index": 0,
+            "input": {
+              "index": 0
+            },
+            "payload": "0x68656c6c6f"
+          }
+        }
+      ]
+    }
+  }
+}
 ```
+
 ## Foundry setup to interact with the Coprocessor
 
 1. **Confirm foundry installation**
