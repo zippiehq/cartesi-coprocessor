@@ -163,7 +163,7 @@ Execute query and the output should looks like this:
   }
 }
 ```
-**Note:** In production your program will be executed from point of snapshot every single time, there is no state saved, memory or otherwise. This is not the case during development mode.
+**Note:** In production, your program will be executed from point of snapshot every single time, there is no state saved, memory or otherwise. This is not the case during development mode.
 
 ## Foundry setup to interact with the Coprocessor
 
