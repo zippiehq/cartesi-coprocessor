@@ -246,7 +246,18 @@ forge build
 ```
 5. **Deployment**
 
-Replace placeholders with your actual RPC URL, private key, and Etherscan API key
+##### Obtaining RPC Provider and Etherscan API Key
+
+To interact with the Ethereum mainnet, you will need an RPC URL provided by services like Alchemy or Infura:
+
+Visit Alchemy or Infura and create an account to obtain the RPC URL.
+
+Go to Etherscan to obtain an API key.
+- Register or log in
+- Navigate to API-Keys in your account settings
+- Generate a new API key for use with your deployments
+
+Replace placeholders with your obtained  RPC URL, private key, and Etherscan API key
 
 ```
 COPROCESSOR_ADDRESS=0xB819BA4c5d2b64d07575ff4B30d3e0Eca219BFd5 MACHINE_HASH=0x<machine_hash_here> forge script script/Deploy.s.sol:DeployScript --rpc-url <rpc-url> --private-key xxx --etherscan-api-key xxx --broadcast --verify
@@ -257,6 +268,8 @@ COPROCESSOR_ADDRESS=0xB819BA4c5d2b64d07575ff4B30d3e0Eca219BFd5 MACHINE_HASH=0x<m
  echo "Machine Hash: $MACHINE_HASH"
 ```
 )
+
+**Note:** Deploying on the Ethereum mainnet involves real transaction costs (gas fees).
 
 **Notice Processing**
 
