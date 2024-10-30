@@ -1,8 +1,6 @@
 # Cartesi Coprocessor SDK (Python Tutorial)
 
 ## Prerequisites
-- nonodo
-- Cartesi Machine
 - Node.js version 18 or higher
 
 ## Install Tools
@@ -149,13 +147,7 @@ w3 space create preferredSpaceName
 ```
 w3 up --car output.car
 ```
-#### Ensure Coprocessor has your program
 
-Use the ```/ensure``` API with the variables you've set:
-
-```
-curl -X POST "https://cartesi-coprocessor-solver.fly.dev/ensure/$CID/$MACHINE_HASH/$SIZE"
-```
 #### Monitor outputs during development
 
 You can monitor the outputs using nonodo by accessing the GraphQL interface at:  http://localhost:8080/graphql
@@ -217,6 +209,14 @@ Execute query and the output should looks like this:
 }
 ```
 **Note:** In production, your program will be executed from point of snapshot every single time, there is no state saved, memory or otherwise. This is not the case during development mode.
+
+#### Ensure Coprocessor has your program
+
+Use the ```/ensure``` API with the variables you've set:
+
+```
+curl -X POST "https://cartesi-coprocessor-solver.fly.dev/ensure/$CID/$MACHINE_HASH/$SIZE"
+```
 
 ## Foundry setup to interact with the Coprocessor
 
