@@ -257,3 +257,7 @@ COPROCESSOR_ADDRESS=0xB819BA4c5d2b64d07575ff4B30d3e0Eca219BFd5 MACHINE_HASH=0x<m
  echo "Machine Hash: $MACHINE_HASH"
 ```
 )
+
+**Notice Processing**
+
+The ``handleNotice`` function in the ``CoprocessorCaller.sol`` smart contract is triggered by notices that are sent from the Python application. This function is called as a direct response to the coprocessor being invoked within the smart contract.
