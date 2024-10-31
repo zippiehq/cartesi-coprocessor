@@ -248,9 +248,15 @@ forge build
 
 ##### Obtaining RPC Provider and Etherscan API Key
 
-To interact with the Ethereum mainnet, you will need an RPC URL provided by services like Alchemy or Infura:
+To interact with the Ethereum mainnet, you will need to obtain:
 
-Visit Alchemy or Infura and create an account to obtain the RPC URL.
+###### RPC Provider url
+- Visit Alchemy or Infura.
+- Sign up for an account or log in if you already have one.
+- Create a new project targeting the Ethereum mainnet.
+- Obtain the RPC URL provided for your project.
+
+###### Etherscan API Key
 
 Go to Etherscan to obtain an API key.
 - Register or log in
