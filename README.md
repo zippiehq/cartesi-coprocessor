@@ -11,7 +11,7 @@ npm i -g nonodo
 ```
 2. **Install cartesi machine**
 
-Download the Cartesi Machine image for your OS from from [this link](https://github.com/edubart/cartesi-machine-everywhere/releases) and add the bin/ folder to your PATH:
+Download the Cartesi Machine (0.18.1-rc7) image for your OS from from [this link](https://github.com/edubart/cartesi-machine-everywhere/releases) and add the bin/ folder to your PATH:
 
 ```
 export PATH="/path/to/cartesi-machine/bin:$PATH"
