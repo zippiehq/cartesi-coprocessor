@@ -55,6 +55,11 @@ cd sample-dapp
 ```
 Edit the ```dapp.py``` to include the ``notice`` functionality, full code below:
 
+
+> [!TIP]
+> If you need help or want to use another language, visit the [Cartesi-Discord](https://discord.gg/pfXMwXDDfW) and feel free to ask in [#cartesi-coprocessor channel](https://discord.com/channels/600597137524391947/1119202450100977695)
+
+
 ```python
 from os import environ
 import logging
