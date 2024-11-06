@@ -1,5 +1,9 @@
 # Cartesi Coprocessor SDK (Python Tutorial)
 
+> [!TIP]
+> If you need help or want to use another language, visit the [Cartesi-Discord](https://discord.gg/pfXMwXDDfW) and feel free to ask in [#cartesi-coprocessor channel](https://discord.com/channels/600597137524391947/1119202450100977695)
+
+
 ## Prerequisites
 - Node.js version 18 or higher
 
