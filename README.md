@@ -17,9 +17,19 @@ npm i -g nonodo
 
 Download the Cartesi Machine (0.18.1-rc7) image for your OS from from [this link](https://github.com/edubart/cartesi-machine-everywhere/releases) and add the bin/ folder to your PATH:
 
+```bash
+# Replace CARTESI_MACHINE_DIR with your downloaded directory name
+export PATH="$HOME/CARTESI_MACHINE_DIR/bin:$PATH"
+
+# Example for macOS ARM64:
+export PATH="$HOME/cartesi-machine-macos-arm64/bin:$PATH"
 ```
-export PATH="/path/to/cartesi-machine/bin:$PATH"
+
+Verify the installation:
+```bash
+cartesi-machine --version
 ```
+
 3. **Set up web3.storage**
 
 Install the web3.storage CLI globally:
