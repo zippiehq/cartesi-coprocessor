@@ -1,0 +1,33 @@
+
+version: "3"
+
+
+
+networks:
+  coprocessor-network:
+    name: coprocessor-network
+    driver: bridge
+
+services:
+  anvil:
+    build:
+      context: .
+      dockerfile: Dockerfile-anvil
+    container_name: anvil
+    ports:
+      - 127.0.0.1:8545:8545
+    volumes:
+      - ./env/eigenlayer/anvil/avs-and-eigenlayer-deployed-anvil-state.json:/root/.anvil/state.json
+      - ./:/cartesi-lambada-coprocessor/
+
+    command: /cartesi-lambada-coprocessor/env/eigenlayer/anvil/run-anvil-devnet.sh
+
+    healthcheck:
+
+      test: bash -c "[ -f /cartesi-lambada-coprocessor/anvil/devnet-operators-ready.flag ]"
+      interval: 3s
+      retries: 300
+      start_period: 15s
+
+    networks:
+      - coprocessor-network
