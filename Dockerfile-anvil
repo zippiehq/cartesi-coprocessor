@@ -1,0 +1,9 @@
+FROM debian
+RUN apt-get update && apt-get install -y git curl bash
+
+RUN curl -L https://foundry.paradigm.xyz | bash
+RUN bash -c 'source /root/.profile && foundryup --version nightly-5b7e4cb3c882b28f3c32ba580de27ce7381f415a'
+RUN cp -r /root/.foundry/bin/* /usr/local/bin/
+RUN adduser --uid 1000 foundry
+
+ENTRYPOINT ["/bin/sh", "-c"]

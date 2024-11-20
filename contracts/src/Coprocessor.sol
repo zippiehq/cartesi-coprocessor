@@ -25,11 +25,15 @@ interface ICoprocessorCallback {
         external;
 }
 
-contract Coprocessor is BLSSignatureChecker, OperatorStateRetriever {
+contract Coprocessor is BLSSignatureChecker, OperatorStateRetriever, Initializable, OwnableUpgradeable {
     using BN254 for BN254.G1Point;
     using LibMerkle32 for bytes32[];
 
     constructor(IRegistryCoordinator _registryCoordinator) BLSSignatureChecker(_registryCoordinator) {}
+
+    function initialize(address initialOwner) public initializer {
+        _transferOwnership(initialOwner);
+    }
 
     event TaskIssued(bytes32 machineHash, bytes input, address callback);
 
