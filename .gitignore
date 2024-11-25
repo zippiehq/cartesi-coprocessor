@@ -3,8 +3,10 @@ contracts/cache/
 contracts/out/
 
 # sample-dapp
-
 sample-dapp
+
+# setup-operator
+setup-operator/target
 
 # Ignores development broadcast logs
 contracts/broadcast/**
