@@ -21,7 +21,6 @@ use std::{
     str::FromStr,
     time::{SystemTime, UNIX_EPOCH},
 };
-
 #[tokio::main]
 async fn main() {
     let opt = Options::parse();
@@ -61,6 +60,13 @@ async fn main() {
         .register_as_operator(operator_details)
         .await
         .unwrap();
+
+        let deposit_into_strategy = el_chain_writer
+        .deposit_erc20_into_strategy(Address::parse_checksummed(opt.strategy_deposit_address, None).unwrap(), U256::from(opt.strategy_deposit_amount))
+        .await
+        .unwrap();
+
+    let _ = wait_transaction(&opt.http_endpoint, deposit_into_strategy).await.unwrap();
 
     let avs_registry_writer = AvsRegistryChainWriter::build_avs_registry_chain_writer(
         get_test_logger(),
