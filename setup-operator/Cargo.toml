@@ -10,7 +10,8 @@ eigen-testing-utils = { git = "https://github.com/Layr-Labs/eigensdk-rs", rev = 
 eigen-client-avsregistry = { git = "https://github.com/Layr-Labs/eigensdk-rs", rev = "0b727925b2b07e0a49d17ee90a0647e27380ab74"}
 eigen-logging = { git = "https://github.com/Layr-Labs/eigensdk-rs", rev = "0b727925b2b07e0a49d17ee90a0647e27380ab74"}
 eigen-crypto-bls = { git = "https://github.com/Layr-Labs/eigensdk-rs", rev = "0b727925b2b07e0a49d17ee90a0647e27380ab74"}
-eigen-types = { git = "https://github.com/Layr-Labs/eigensdk-rs", rev = "0b727925b2b07e0a49d17ee90a0647e27380ab74"}
+eigen-utils = { git = "https://github.com/Layr-Labs/eigensdk-rs", rev = "0b727925b2b07e0a49d17ee90a0647e27380ab74"}
 tokio = { version = "1.41.1", features = ["macros", "rt-multi-thread"] }
 alloy-primitives = "0.8.7"
 clap = { version = "4.3.10", features = ["derive", "env", "string"] }
+serde_json = "1.0.133"

@@ -1,8 +1,6 @@
 
 version: "3"
 
-
-
 networks:
   coprocessor-network:
     name: coprocessor-network
@@ -24,10 +22,56 @@ services:
 
     healthcheck:
 
-      test: bash -c "[ -f /cartesi-lambada-coprocessor/anvil/devnet-operators-ready.flag ]"
+      test: bash -c "[ -f /cartesi-lambada-coprocessor/env/eigenlayer/anvil/devnet-operators-ready.flag ]"
       interval: 3s
       retries: 300
       start_period: 15s
 
+    networks:
+      - coprocessor-network
+
+  operator:
+    image: ghcr.io/zippiehq/cartesi-coprocessor-operator:latest
+    container_name: cartesi-coprocessor-operator
+    ports:
+      - 127.0.0.1:3033:3033
+    depends_on:
+      anvil:
+        condition: service_healthy
+    environment:
+      SNAPSHOT_DIR: demo-task
+    networks:
+      - coprocessor-network
+
+  solver:
+    image: ghcr.io/zippiehq/cartesi-coprocessor-solver:latest
+    container_name: cartesi-coprocessor-solver
+    ports:
+      - 127.0.0.1:3034:3034
+    depends_on:
+      anvil:
+        condition: service_healthy
+    volumes:
+      - ./config.toml:/cartesi-coprocessor-solver/config.toml
+    networks:
+      - coprocessor-network
+  
+  setup-operator:
+    build:
+      context: .
+      dockerfile: Dockerfile-setup-operator
+    container_name: setup-operator
+    working_dir: /usr/src/setup-operator
+    depends_on:
+      anvil:
+        condition: service_healthy
+    volumes:
+      - ./setup-operator:/usr/src/setup-operator
+      - ~/.cargo/registry:/root/.cargo/registry
+      - ~/.cargo/git:/root/.cargo/git
+      - ./contracts/script/output/coprocessor_deployment_output_devnet.json:/usr/src/setup-operator/contracts/script/output/coprocessor_deployment_output_devnet.json
+      - ./contracts/script/input/deployment_parameters_devnet.json:/usr/src/setup-operator/contracts/script/input/deployment_parameters_devnet.json
+    environment:
+      OPERATOR_BLS_KEY: ${OPERATOR_BLS_KEY}
     networks:
       - coprocessor-network
