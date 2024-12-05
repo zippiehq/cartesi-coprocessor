@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rm /cartesi-lambada-coprocessor/tests/anvil/devnet-operators-ready.flag
+rm /cartesi-lambada-coprocessor/env/eigenlayer/anvil/devnet-operators-ready.flag
 
 anvil --load-state /root/.anvil/state.json --host 0.0.0.0 --block-time 12 &
 timeout 22 bash -c 'until printf "" 2>>/dev/null >>/dev/tcp/$0/$1; do sleep 1; done' 0.0.0.0:8545
@@ -37,6 +37,6 @@ cast send \
     0x7a2088a1bFc9d81c55368AE168C2C02570cB814F "mint(address,uint256)" 0xEc1dc4D2a9459758DCe2bb13096F303a8FAF4c92 10    
 
 
-touch /cartesi-lambada-coprocessor/tests/anvil/devnet-operators-ready.flag
+touch /cartesi-lambada-coprocessor/env/eigenlayer/anvil/devnet-operators-ready.flag
 
 tail -f /dev/null
