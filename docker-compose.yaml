@@ -40,8 +40,11 @@ services:
         condition: service_healthy
       setup-operator:
         condition: service_completed_successfully
+    volumes:
+      - ./demo-task:/operator/demo-task
     environment:
       SNAPSHOT_DIR: demo-task
+      BLS_PRIVATE_KEY: ${BLS_PRIVATE_KEY}
     networks:
       - coprocessor-network
 
