@@ -66,9 +66,9 @@ services:
   postgres:
     image: postgres:latest
     environment:
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_USER=user
-      - POSTGRES_DB=db
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: user
+      POSTGRES_DB: db
     networks:
       - coprocessor-network
 
@@ -86,5 +86,19 @@ services:
       - ./config.toml:/cartesi-coprocessor-solver/config.toml
     environment:
       - RUST_LOG=trace
+    networks:
+      - coprocessor-network
+
+  otterscan:
+    image: otterscan/otterscan:v2.6.1
+    ports:
+      - 127.0.0.1:5100:80
+    environment:
+      ERIGON_URL: anvil:8545
+    depends_on:
+      anvil:
+        condition: service_healthy
+      setup-operator:
+        condition: service_completed_successfully
     networks:
       - coprocessor-network
