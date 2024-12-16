@@ -1,8 +1,0 @@
-FROM rust:latest
-WORKDIR /usr/src/setup-operator
-
-COPY ./setup-operator /usr/src/setup-operator
-COPY ./contracts/script/output/coprocessor_deployment_output_devnet.json /usr/src/setup-operator/contracts/script/output/coprocessor_deployment_output_devnet.json
-COPY ./contracts/script/input/deployment_parameters_devnet.json /usr/src/setup-operator/contracts/script/input/deployment_parameters_devnet.json
-
-RUN cargo build --release
