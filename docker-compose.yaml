@@ -94,7 +94,7 @@ services:
     ports:
       - 127.0.0.1:5100:80
     environment:
-      ERIGON_URL: anvil:8545
+      ERIGON_URL: http://127.0.0.1:8545
     depends_on:
       anvil:
         condition: service_healthy
