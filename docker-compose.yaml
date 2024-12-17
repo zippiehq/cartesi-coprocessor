@@ -95,10 +95,52 @@ services:
       - 127.0.0.1:5100:80
     environment:
       ERIGON_URL: http://127.0.0.1:8545
+      OTTERSCAN_CONFIG: | 
+        { 
+          "erigonURL": "http://127.0.0.1:8545", 
+          "sourcifySources": { 
+            "ipfs": "http://127.0.0.1:5555/repository", 
+            "central_server": "http://127.0.0.1:5555/repository" 
+          }
+        }
     depends_on:
       anvil:
         condition: service_healthy
       setup-operator:
         condition: service_completed_successfully
+    networks:
+      - coprocessor-network
+
+  sourcify:
+    image: ghcr.io/ethereum/sourcify/server:latest
+    ports:
+      - 127.0.0.1:5555:5555
+    volumes:
+      - ./sourcify-chains.json:/home/app/services/server/dist/sourcify-chains.json
+      - ./local.js:/home/app/services/server/dist/config/local.js
+    environment:
+      NODE_ENV: production
+    depends_on:
+      anvil:
+        condition: service_healthy
+      setup-operator:
+        condition: service_completed_successfully
+    networks:
+      - coprocessor-network
+  
+  foundry:
+    image: ghcr.io/foundry-rs/foundry
+    platform: linux/amd64
+    depends_on:
+      anvil:
+        condition: service_healthy
+      setup-operator:
+        condition: service_completed_successfully
+    volumes:
+      - ./contracts:/contracts
+    entrypoint: sh
+    command: >
+      -c "cd contracts && forge verify-contract 0x36C02dA8a0983159322a80FFE9F24b1acfF8B570 src/Coprocessor.sol:Coprocessor --verifier sourcify --verifier-url http://sourcify:5555 --rpc-url http://anvil:8545 --chain-id 31337 --constructor-args 0x0000000000000000000000001613beb3b2c4f22ee086b2b38c1476a3ce7f78e8 --num-of-optimizations 200 --compiler-version 0.8.12 --evm-version london
+      && forge verify-contract 0x851356ae760d987e095750cceb3bc6014560891c lib/eigenlayer-middleware/lib/openzeppelin-contracts/contracts/proxy/transparent/TransparentUpgradeableProxy.sol:TransparentUpgradeableProxy --verifier sourcify --verifier-url http://sourcify:5555 --rpc-url http://anvil:8545 --chain-id 31337 --constructor-args 0x000000000000000000000000c3e53f4d16ae77db1c982e75a937b9f60fe6369000000000000000000000000067d269191c92caf3cd7723f116c85e6e9bf5593300000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000000 --num-of-optimizations 200 --compiler-version 0.8.12 --evm-version london"
     networks:
       - coprocessor-network
