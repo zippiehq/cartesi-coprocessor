@@ -1,0 +1,9 @@
+{
+    "31337": {
+      "sourcifyName": "Anvil",
+      "supported": true,
+      "rpc": [
+        "http://anvil:8545"
+      ]
+    }
+  }
