@@ -4,3 +4,12 @@
 [submodule "contracts/lib/eigenlayer-middleware"]
 	path = contracts/lib/eigenlayer-middleware
 	url = https://github.com/Layr-Labs/eigenlayer-middleware
+[submodule "contracts-op/lib/forge-std"]
+    path = contracts-op/lib/forge-std
+    url = https://github.com/foundry-rs/forge-std
+[submodule "contracts-op/lib/optimism"]
+	path = contracts-op/lib/optimism
+	url = https://github.com/ethereum-optimism/optimism
+[submodule "contracts-op/lib/openzeppelin-contracts"]
+	path = contracts-op/lib/openzeppelin-contracts
+	url = https://github.com/openzeppelin/openzeppelin-contracts
