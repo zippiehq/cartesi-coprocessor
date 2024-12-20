@@ -83,7 +83,7 @@ logger.info(f"HTTP rollup_server url is {rollup_server}")
 def emit_notice(data):
     notice_payload = {"payload": data["payload"]}
     response = requests.post(rollup_server + "/notice", json=notice_payload)
-    if response.status_code == 200:
+    if response.status_code == 201:
         logger.info(f"Notice emitted successfully with data: {data}")
     else:
         logger.error(f"Failed to emit notice with data: {data}. Status code: {response.status_code}")
