@@ -35,6 +35,7 @@ services:
     container_name: cartesi-coprocessor-operator
     ports:
       - 127.0.0.1:3033:3033
+      - 127.0.0.1:5001:5001
     depends_on:
       anvil:
         condition: service_healthy
