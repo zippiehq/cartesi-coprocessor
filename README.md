@@ -245,7 +245,7 @@ If Foundry isn't installed, refer back to the Install Foundry step.
 This template repository contains the ICoprocessor.sol interface and a sample contract:
 
 ```
-git clone https://github.com/zippiehq/cartesi-coprocessor-contract-template.git
+git clone https://github.com/zippiehq/cartesi-coprocessor-contract-template.git -b old 
 cd cartesi-coprocessor-contract-template
 ```
 3. **Get dependencies**
