@@ -94,7 +94,7 @@ services:
     image: ghcr.io/zippiehq/cartesi-coprocessor-solver:latest
     container_name: cartesi-coprocessor-solver2
     ports:
-      - 127.0.0.1:3035:3034
+      - 127.0.0.1:3034:3034
     depends_on:
       anvil:
         condition: service_healthy
