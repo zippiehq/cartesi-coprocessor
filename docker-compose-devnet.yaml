@@ -101,7 +101,7 @@ services:
       setup-operator:
         condition: service_completed_successfully
     volumes:
-      - ./config-devnet-l2mock.toml:/cartesi-coprocessor-solver/config.toml
+      - ./config-devnet-l2mock.toml:/cartesi-coprocessor-solver2/config.toml
     environment:
       - RUST_LOG=trace
     networks:
