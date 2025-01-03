@@ -1,0 +1,20 @@
+operator:
+    address: 0x02C9ca5313A6E826DC05Bbe098150b3215D5F821
+    delegation_approver_address: "0x0000000000000000000000000000000000000000"
+    staker_opt_out_window_blocks: 0
+    metadata_url: "https://raw.githubusercontent.com/tantatnhan/chainbase/refs/heads/main/metadata.json"
+el_delegation_manager_address: 0xA44151489861Fe9e3055d95adC98FbD462B948e7
+eth_rpc_url: http://localhost:8545
+chain_id: 17000
+private_key_store_path: /root/.eigenlayer/operator_keys/foo.ecdsa.key.json
+signer_type: local_keystore
+fireblocks:
+    api_key: ""
+    secret_key: ""
+    base_url: ""
+    vault_account_name: ""
+    secret_storage_type: ""
+    aws_region: ""
+    timeout: 0
+web3:
+    url: ""

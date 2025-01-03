@@ -36,6 +36,9 @@ cast send \
     --private-key 0xa38181ab9321e4bfdfe8dae9f99b05529483bdf0254bd5bcbcc51232f26b8c36 \
     0x7a2088a1bFc9d81c55368AE168C2C02570cB814F "mint(address,uint256)" 0xEc1dc4D2a9459758DCe2bb13096F303a8FAF4c92 10    
 
+rm -f /root/.eigenlayer/operator_keys/foo.ecdsa.key.json
+echo "abcd" | /usr/local/bin/eigenlayer-orig keys import -i -k ecdsa foo  0xc276a0e2815b89e9a3d8b64cb5d745d5b4f6b84531306c97aad82156000a7dd7 2>&1 | tee /import.log
+echo "abcd" | /usr/local/bin/eigenlayer-orig operator register /cartesi-lambada-coprocessor/env/eigenlayer/anvil/operator-devnet.yaml 2>&1 | tee /register.log
 
 touch /cartesi-lambada-coprocessor/env/eigenlayer/anvil/devnet-operators-ready.flag
 
