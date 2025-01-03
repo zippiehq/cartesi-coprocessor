@@ -1,7 +1,9 @@
 #!/bin/bash
 
 rm /cartesi-lambada-coprocessor/env/eigenlayer/anvil/devnet-operators-ready.flag
-
+rm -rf /cartesi-lambada-coprocessor/contracts/out
+rm -rf /cartesi-lambada-coprocessor/contracts/cache
+rm -rf /cartesi-lambada-coprocessor/contracts/broadcast
 anvil --load-state /root/.anvil/state.json --host 0.0.0.0 --block-time 12 &
 timeout 22 bash -c 'until printf "" 2>>/dev/null >>/dev/tcp/$0/$1; do sleep 1; done' 0.0.0.0:8545
 

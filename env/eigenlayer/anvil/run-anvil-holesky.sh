@@ -3,6 +3,10 @@ rm /cartesi-lambada-coprocessor/env/eigenlayer/anvil/holesky-operators-ready.fla
 
 rm /cartesi-lambada-coprocessor/contracts/script/output/coprocessor_deployment_output_holesky.json
 
+rm -rf /cartesi-lambada-coprocessor/contracts/out
+rm -rf /cartesi-lambada-coprocessor/contracts/cache
+rm -rf /cartesi-lambada-coprocessor/contracts/broadcast
+
 ANVIL_FORK_URL=`cat /run/secrets/anvil_fork_url_holesky`
 anvil --hardfork cancun --fork-url $ANVIL_FORK_URL --host 0.0.0.0 --block-time 12 -vvvvv &
 timeout 22 bash -c 'until printf "" 2>>/dev/null >>/dev/tcp/$0/$1; do sleep 1; done' 0.0.0.0:8545
@@ -46,6 +50,7 @@ cd /cartesi-lambada-coprocessor/contracts
 
 forge script \
     script/CoprocessorDeployerHolesky.s.sol:CoprocessorDeployerHolesky \
+    --evm-version cancun \
     --rpc-url http://0.0.0.0:8545 \
     --private-key 0xa38181ab9321e4bfdfe8dae9f99b05529483bdf0254bd5bcbcc51232f26b8c36 \
     --broadcast -v

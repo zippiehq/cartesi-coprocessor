@@ -269,6 +269,7 @@ contract CoprocessorDeployer is Script, Utils {
 
         // Third, upgrade the proxy contracts to use the correct implementation contracts and initialize them.
         contracts.coprocessorImplementation = new Coprocessor(contracts.registryCoordinator);
+	// XXX this does not look sane anymore does it?
         contracts.proxyAdmin.upgradeAndCall(
             TransparentUpgradeableProxy(payable(address(contracts.coprocessor))),
             address(contracts.coprocessorImplementation),
