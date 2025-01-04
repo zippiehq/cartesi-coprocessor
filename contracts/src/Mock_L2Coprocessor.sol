@@ -22,11 +22,11 @@ contract Mock_L2Coprocessor {
         emit TaskIssued(machineHash, input, callback);
     }
 
-    function storeResponseHash(bytes32 respHash, bytes calldata senderData) external {
+    function storeResponseHash(bytes32 responseHash, bytes calldata senderData) external {
         require(msg.sender == l1Sender, "Unauthorized caller");
-        require(!responses[respHash], "Response already whitelisted");
-        responses[respHash] = true;
-        emit TaskCompleted(respHash);
+        require(!responses[responseHash], "Response already whitelisted");
+        responses[responseHash] = true;
+        emit TaskCompleted(responseHash);
     }
     function setL1Sender(address _newL1Sender) external {
         require(msg.sender == l1Sender || l1Sender == address(0), "Unauthorized caller");
