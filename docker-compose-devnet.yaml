@@ -10,7 +10,7 @@ services:
   anvil:
     build:
       context: .
-      dockerfile: Dockerfile-anvil
+      dockerfile: Dockerfile-anvil-latest
     container_name: anvil
     ports:
       - 127.0.0.1:8545:8545
@@ -60,7 +60,7 @@ services:
       - ./contracts/script/input/deployment_parameters_devnet.json:/operator/contracts/script/input/deployment_parameters_devnet.json
     environment:
       OPERATOR_BLS_KEY: ${OPERATOR_BLS_KEY:-13219903133444082589215719304558031505888625714969126489655808257015621956774}
-    command: bash -c "/operator/setup-operator --operator-private-key 0xc276a0e2815b89e9a3d8b64cb5d745d5b4f6b84531306c97aad82156000a7dd7 --http-endpoint http://anvil:8545 --strategy-deposit-address 0x09635F643e140090A9A8Dcd712eD6285858ceBef --strategy-deposit-amount 10 --chain-writer-reader-addresses contracts/script/input/deployment_parameters_devnet.json --avs-registry-writer-addresses contracts/script/output/coprocessor_deployment_output_devnet.json --socket http://operator:3033"
+    command: bash -c "/operator/setup-operator --operator-private-key 0xc276a0e2815b89e9a3d8b64cb5d745d5b4f6b84531306c97aad82156000a7dd7 --http-endpoint http://anvil:8545 --strategy-deposit-address 0x67d269191c92Caf3cD7723F116c85e6E9bf55933 --strategy-deposit-amount 10 --chain-writer-reader-addresses contracts/script/input/deployment_parameters_devnet.json --avs-registry-writer-addresses contracts/script/output/coprocessor_deployment_output_devnet.json --socket http://operator:3033"
     networks:
       - coprocessor-network
 
@@ -141,7 +141,7 @@ services:
       - ./contracts:/contracts
     entrypoint: sh
     command: >
-      -c "cd contracts && forge verify-contract 0x36C02dA8a0983159322a80FFE9F24b1acfF8B570 src/Coprocessor.sol:Coprocessor --verifier sourcify --verifier-url http://sourcify:5555 --rpc-url http://anvil:8545 --chain-id 31337 --constructor-args 0x0000000000000000000000001613beb3b2c4f22ee086b2b38c1476a3ce7f78e8 --num-of-optimizations 200 --compiler-version 0.8.12 --evm-version london
-      && forge verify-contract 0x851356ae760d987e095750cceb3bc6014560891c lib/eigenlayer-middleware/lib/openzeppelin-contracts/contracts/proxy/transparent/TransparentUpgradeableProxy.sol:TransparentUpgradeableProxy --verifier sourcify --verifier-url http://sourcify:5555 --rpc-url http://anvil:8545 --chain-id 31337 --constructor-args 0x000000000000000000000000c3e53f4d16ae77db1c982e75a937b9f60fe6369000000000000000000000000067d269191c92caf3cd7723f116c85e6e9bf5593300000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000000 --num-of-optimizations 200 --compiler-version 0.8.12 --evm-version london"
+      -c "cd contracts && forge verify-contract 0x4c5859f0F772848b2D91F1D83E2Fe57935348029 src/Coprocessor.sol:Coprocessor --verifier sourcify --verifier-url http://sourcify:5555 --rpc-url http://anvil:8545 --chain-id 31337 --constructor-args 0x0000000000000000000000001613beb3b2c4f22ee086b2b38c1476a3ce7f78e8 --num-of-optimizations 200 --compiler-version 0.8.12 --evm-version london
+      && forge verify-contract 0x95401dc811bb5740090279Ba06cfA8fcF6113778 lib/eigenlayer-middleware/lib/openzeppelin-contracts/contracts/proxy/transparent/TransparentUpgradeableProxy.sol:TransparentUpgradeableProxy --verifier sourcify --verifier-url http://sourcify:5555 --rpc-url http://anvil:8545 --chain-id 31337 --constructor-args 0x000000000000000000000000c3e53f4d16ae77db1c982e75a937b9f60fe6369000000000000000000000000067d269191c92caf3cd7723f116c85e6e9bf5593300000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000000 --num-of-optimizations 200 --compiler-version 0.8.12 --evm-version london"
     networks:
       - coprocessor-network
