@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
+import {console} from "forge-std/console.sol";
 import "./ICoprocessorCallback.sol";
 import {LibMerkle32} from "./LibMerkle32.sol";
 
@@ -39,15 +40,20 @@ contract Mock_L2Coprocessor {
         bytes[] calldata outputs,
         address callbackAddress
     ) public {
+        console.log("1")
         bytes32 respHash = keccak256(abi.encode(resp));
         require(responses[respHash], "R");
+
+        console.log("2")
 
         bytes32[] memory outputsHashes = new bytes32[](outputs.length);
         for (uint256 i = 0; i < outputs.length; i++) {
             outputsHashes[i] = keccak256(outputs[i]);
         }
         require(resp.outputMerkle == LibMerkle32.merkleRoot(outputsHashes, 63), "M");
+        console.log("3")
 
         ICoprocessorCallback(callbackAddress).coprocessorCallbackOutputsOnly(resp.machineHash, resp.payloadHash, outputs);
+        console.log("4")
     }
 }
