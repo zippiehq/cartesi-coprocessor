@@ -40,21 +40,21 @@ contract Mock_L2Coprocessor {
         bytes[] calldata outputs,
         address callbackAddress
     ) public {
-        console.log("1")
+        console.log("1");
         bytes32 respHash = keccak256(abi.encode(resp));
-        console.log("2")
+        console.log("2");
         require(responses[respHash], "R");
 
-        console.log("3")
+        console.log("3");
 
         bytes32[] memory outputsHashes = new bytes32[](outputs.length);
         for (uint256 i = 0; i < outputs.length; i++) {
             outputsHashes[i] = keccak256(outputs[i]);
         }
         require(resp.outputMerkle == LibMerkle32.merkleRoot(outputsHashes, 63), "M");
-        console.log("4")
+        console.log("4");
 
         ICoprocessorCallback(callbackAddress).coprocessorCallbackOutputsOnly(resp.machineHash, resp.payloadHash, outputs);
-        console.log("5")
+        console.log("5");
     }
 }
