@@ -19,7 +19,9 @@ contract Coprocessor is BLSSignatureChecker, OperatorStateRetriever, Initializab
     using BN254 for BN254.G1Point;
     using LibMerkle32 for bytes32[];
 
-    constructor(IRegistryCoordinator _registryCoordinator) BLSSignatureChecker(_registryCoordinator) {}
+    constructor(IRegistryCoordinator _registryCoordinator) BLSSignatureChecker(_registryCoordinator) {
+        staleStakesForbidden = false;
+    }
 
     function initialize(address initialOwner) public initializer {
         _transferOwnership(initialOwner);

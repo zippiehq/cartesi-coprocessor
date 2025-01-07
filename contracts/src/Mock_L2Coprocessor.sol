@@ -40,7 +40,7 @@ contract Mock_L2Coprocessor {
         address callbackAddress
     ) public {
         bytes32 respHash = keccak256(abi.encode(resp));
-        require(responses[respHash]);
+        require(responses[respHash], "R");
 
         bytes32[] memory outputsHashes = new bytes32[](outputs.length);
         for (uint256 i = 0; i < outputs.length; i++) {
