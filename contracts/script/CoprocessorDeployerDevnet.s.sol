@@ -18,6 +18,7 @@ import "forge-std/console.sol";
 import "../src/CoprocessorToL2.sol";
 import "../src/Mock_L2Coprocessor.sol";
 import "../src/Mock_L1_Sender.sol";
+import "../src/Mock_L2CoprocessorCaller.sol";
 
 contract CoprocessorDeployerDevnet is CoprocessorDeployer {
     function run() external {
@@ -42,10 +43,11 @@ contract CoprocessorDeployerDevnet is CoprocessorDeployer {
         mockL2Coprocessor.setL1Sender(address(mockL1Sender));
 
         CoprocessorToL2 coprocessorToL2 = new CoprocessorToL2(contracts.registryCoordinator);
+        MockL2CoprocessorCaller mockL2CoprocessorCaller = new MockL2CoprocessorCaller(address(mockL2Coprocessor));
 
         vm.stopBroadcast();
 
-        AuxContract[] memory auxContracts = new AuxContract[](5);
+        AuxContract[] memory auxContracts = new AuxContract[](6);
         {
             auxContracts[0].name = "erc20Mock";
             auxContracts[0].addr = erc20Mock;
@@ -57,6 +59,8 @@ contract CoprocessorDeployerDevnet is CoprocessorDeployer {
             auxContracts[3].addr = address(mockL1Sender);
             auxContracts[4].name = "CoprocessorToL2";
             auxContracts[4].addr = address(coprocessorToL2);
+            auxContracts[5].name = "Mock_L2CoprocessorCaller";
+            auxContracts[5].addr = address(mockL2CoprocessorCaller);
         }
         string memory outputPath = "./script/output/coprocessor_deployment_output_devnet.json";
         writeDeploymentOutput(contracts, auxContracts, outputPath);
