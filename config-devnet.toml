@@ -1,7 +1,7 @@
 http_endpoint = "http://anvil:8545"
 ws_endpoint = "ws://anvil:8545"
-registry_coordinator_address = "0x1613beB3B2C4f22Ee086B2b38C1476A3cE7f78E8"
-operator_state_retriever_address = "0x95401dc811bb5740090279Ba06cfA8fcF6113778"
+registry_coordinator_address = "0xf5059a5D33d5853360D16C683c16e67980206f36"
+operator_state_retriever_address = "0x70e0bA845a1A0F2DA3359C97E0285013525FFC49"
 current_first_block = 1
 task_issuer = "0x851356ae760d987E095750cCeb3bC6014560891C"
 callback_address = "0x851356ae760d987E095750cCeb3bC6014560891C"
@@ -10,5 +10,5 @@ socket = "http://operator:3033"
 secret_key = "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
 payment_phrase = "test test test test test test test test test test test junk"
 postgre_connect_request = "host=postgres dbname=db user=user password=password"
-payment_token = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+payment_token = "0xc5a5C42992dECbae36851359345FE25997F5C42d"
 max_ops = 1
