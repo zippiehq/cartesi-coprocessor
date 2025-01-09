@@ -96,12 +96,12 @@ services:
       - 127.0.0.1:5100:80
     environment:
       ERIGON_URL: http://127.0.0.1:8545
-      OTTERSCAN_CONFIG: | 
-        { 
-          "erigonURL": "http://127.0.0.1:8545", 
-          "sourcifySources": { 
-            "ipfs": "http://127.0.0.1:5555/repository", 
-            "central_server": "http://127.0.0.1:5555/repository" 
+      OTTERSCAN_CONFIG: |
+        {
+          "erigonURL": "http://127.0.0.1:8545",
+          "sourcifySources": {
+            "ipfs": "http://127.0.0.1:5555/repository",
+            "central_server": "http://127.0.0.1:5555/repository"
           }
         }
     depends_on:
@@ -128,7 +128,7 @@ services:
         condition: service_completed_successfully
     networks:
       - coprocessor-network
-  
+
   foundry:
     image: ghcr.io/foundry-rs/foundry
     platform: linux/amd64
