@@ -42,6 +42,8 @@ rm -f /root/.eigenlayer/operator_keys/foo.ecdsa.key.json
 echo "abcd" | /usr/local/bin/eigenlayer-orig keys import -i -k ecdsa foo  0xc276a0e2815b89e9a3d8b64cb5d745d5b4f6b84531306c97aad82156000a7dd7 2>&1 | tee /import.log
 echo "abcd" | /usr/local/bin/eigenlayer-orig operator register /cartesi-lambada-coprocessor/env/eigenlayer/anvil/operator-devnet.yaml 2>&1 | tee /register.log
 
+cast rpc anvil_mine 200 --rpc-url http://localhost:8545 > /dev/null
+
 touch /cartesi-lambada-coprocessor/env/eigenlayer/anvil/devnet-operators-ready.flag
 
 tail -f /dev/null
