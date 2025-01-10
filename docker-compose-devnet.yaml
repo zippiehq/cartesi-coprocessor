@@ -44,6 +44,7 @@ services:
     volumes:
       - ./demo-task:/operator/demo-task
     environment:
+      ALWAYS_CONSOLE_PUTCHAR: true
       SNAPSHOT_DIR: demo-task
       BLS_PRIVATE_KEY: ${OPERATOR_BLS_KEY:-13219903133444082589215719304558031505888625714969126489655808257015621956774}
     networks:
