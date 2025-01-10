@@ -31,7 +31,7 @@ jobs:
 
           # check the status
           check_status() {
-            STATUS=$(curl -s "http://localhost:3034/ensure/bafybeihpo6pncx7hyf26v6vszb25q4spszigxkfc4fxvamfzpy5b2bjydm/11084eeb3de8d6ad262736d1f59b129fc9c134ab52248d39c2c920facafe8403/289182342" | jq -r '.operator_ids_with_states["931a13987a36a6508d2ade6961f55d97209a7b42f66a7f0fdd899dea8fcb7d4d"]')
+            STATUS=$(curl -X POST -s "http://localhost:3034/ensure/bafybeihpo6pncx7hyf26v6vszb25q4spszigxkfc4fxvamfzpy5b2bjydm/11084eeb3de8d6ad262736d1f59b129fc9c134ab52248d39c2c920facafe8403/289182342" | jq -r '.operator_ids_with_states["931a13987a36a6508d2ade6961f55d97209a7b42f66a7f0fdd899dea8fcb7d4d"]')
             echo "Current status: $STATUS"
             if [ "$STATUS" == "ready" ]; then
               return 0
@@ -41,14 +41,14 @@ jobs:
           }
 
           echo "Polling for status to be 'ready'..."
-          for i in {1..30}; do
+          for i in {1..600}; do
             if check_status; then
               echo "Status is ready."
               break
             fi
             echo "Status not ready yet. Waiting 10 seconds..."
             sleep 10
-            if [ "$i" -eq 30 ]; then
+            if [ "$i" -eq 600 ]; then
               echo "Timeout waiting for status to be ready."
               exit 1
             fi
