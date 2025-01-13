@@ -11,11 +11,11 @@ networks:
     driver: bridge
 
 services:
-  anvil_latest:
+  anvil:
     build:
       context: .
       dockerfile: Dockerfile-anvil-latest
-    container_name: anvil_latest
+    container_name: anvil
     ports:
       - 127.0.0.1:8545:8545
     volumes:
@@ -43,7 +43,7 @@ services:
       - 127.0.0.1:3033:3033
       - 127.0.0.1:5001:5001
     depends_on:
-      anvil_latest:
+      anvil:
         condition: service_healthy
       setup-operator:
         condition: service_completed_successfully
@@ -52,6 +52,7 @@ services:
     environment:
       SNAPSHOT_DIR: demo-task
       BLS_PRIVATE_KEY: ${OPERATOR_BLS_KEY:-13219903133444082589215719304558031505888625714969126489655808257015621956774}
+      IPFS_DAEMON_OFFLINE: ${IPFS_DAEMON_ONLINE-true}
     networks:
       - coprocessor-network
 
@@ -59,7 +60,7 @@ services:
     image: ghcr.io/zippiehq/cartesi-coprocessor-operator:latest
     container_name: cartesi-coprocessor-setup-operator
     depends_on:
-      anvil_latest:
+      anvil:
         condition: service_healthy
     volumes:
       - ./contracts/script/output/coprocessor_deployment_output_holesky.json:/operator/contracts/script/output/coprocessor_deployment_output_holesky.json
@@ -85,7 +86,7 @@ services:
     ports:
       - 127.0.0.1:3034:3034
     depends_on:
-      anvil_latest:
+      anvil:
         condition: service_healthy
       setup-operator:
         condition: service_completed_successfully
@@ -111,7 +112,7 @@ services:
           }
         }
     depends_on:
-      anvil_latest:
+      anvil:
         condition: service_healthy
       setup-operator:
         condition: service_completed_successfully
@@ -128,7 +129,7 @@ services:
     environment:
       NODE_ENV: production
     depends_on:
-      anvil_latest:
+      anvil:
         condition: service_healthy
       setup-operator:
         condition: service_completed_successfully
@@ -139,7 +140,7 @@ services:
     image: ghcr.io/foundry-rs/foundry
     platform: linux/amd64
     depends_on:
-      anvil_latest:
+      anvil:
         condition: service_healthy
       setup-operator:
         condition: service_completed_successfully

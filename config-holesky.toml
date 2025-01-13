@@ -1,5 +1,7 @@
-http_endpoint = "http://anvil:8545"
-ws_endpoint = "ws://anvil:8545"
+l1_http_endpoint = "http://anvil:8545"
+l2_http_endpoint = "http://anvil:8545"
+l1_ws_endpoint = "ws://anvil:8545"
+l2_ws_endpoint = "ws://anvil:8545"
 registry_coordinator_address = "0x412A01FdB86b3984BFBFa209B8B7Eb1D4B35A25D"
 operator_state_retriever_address = "0x8E119211Db1df2D4EB66995b1A34d540fe932A92"
 current_first_block = 3063088
@@ -12,3 +14,9 @@ payment_phrase = "test test test test test test test test test test test junk"
 postgre_connect_request = "host=postgres dbname=db user=user password=password"
 payment_token = "0x94373a4919B3240D86eA41593D5eBa789FEF3848"
 max_ops = 1
+eth_value = "0"
+senderData = [0]
+l2Sender = "0x82e01223d51Eb87e16A03E24687EDF0F294da6f1"
+listen_network = "L1"
+l2_coprocessor_address = "0xCD8a1C3ba11CF5ECfa6267617243239504a98d90"
+l1_coprocessor_address = "0x7969c5eD335650692Bc04293B07F5BF2e7A673C0"
