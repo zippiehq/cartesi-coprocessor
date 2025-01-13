@@ -46,6 +46,7 @@ services:
     environment:
       ALWAYS_CONSOLE_PUTCHAR: true
       SNAPSHOT_DIR: /operator-snapshots
+      LLAMA_SERVER: http://llama-server:8080
       BLS_PRIVATE_KEY: ${OPERATOR_BLS_KEY:-13219903133444082589215719304558031505888625714969126489655808257015621956774}
       IPFS_DAEMON_OFFLINE: ${IPFS_DAEMON_ONLINE-true}
     networks:
@@ -153,3 +154,18 @@ services:
       && forge verify-contract 0x95401dc811bb5740090279Ba06cfA8fcF6113778 lib/eigenlayer-middleware/lib/openzeppelin-contracts/contracts/proxy/transparent/TransparentUpgradeableProxy.sol:TransparentUpgradeableProxy --verifier sourcify --verifier-url http://sourcify:5555 --rpc-url http://anvil:8545 --chain-id 31337 --constructor-args $(cast abi-encode \"constructor(address,address,bytes)\" \"0x9E545E3C0baAB3E08CdfD552C960A1050f373042\" \"0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690\" \"0x\") --num-of-optimizations 200 --compiler-version 0.8.20 --evm-version london"
     networks:
       - coprocessor-network
+      
+  llama-server:
+    image: ghcr.io/ggerganov/llama.cpp:server
+    container_name: llama-server
+    profiles: 
+      - llm
+    volumes:
+      - ./llama/models:/llama/models
+    command: -m /llama/models/Phi-3-mini-4k-instruct-q4.gguf -c 2048
+    healthcheck:
+     test: ["CMD", "curl", "-f", "http://127.0.0.1:8080/health"]
+     interval: 10s
+     retries: 200
+     start_period: 10s
+     
