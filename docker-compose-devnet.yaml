@@ -96,6 +96,8 @@ services:
     image: otterscan/otterscan:v2.6.1
     ports:
       - 127.0.0.1:5100:80
+    profiles:
+      - explorer
     environment:
       ERIGON_URL: http://127.0.0.1:8545
       OTTERSCAN_CONFIG: | 
@@ -123,6 +125,8 @@ services:
       - ./local.js:/home/app/services/server/dist/config/local.js
     environment:
       NODE_ENV: production
+    profiles:
+      - explorer
     depends_on:
       anvil:
         condition: service_healthy
@@ -134,6 +138,8 @@ services:
   foundry:
     image: ghcr.io/foundry-rs/foundry
     platform: linux/amd64
+    profiles:
+      - explorer
     depends_on:
       anvil:
         condition: service_healthy
