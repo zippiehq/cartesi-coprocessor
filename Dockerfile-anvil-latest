@@ -1,13 +1,5 @@
 FROM golang:1.21.11 AS orig-cli
 WORKDIR /
-RUN git clone https://github.com/Layr-Labs/eigenlayer-cli.git
-RUN cd eigenlayer-cli && git checkout v0.11.0 && make build 
-
-FROM golang:1.21.11 AS holesky-cli
-WORKDIR /
-RUN git clone https://github.com/Layr-Labs/eigenlayer-cli.git
-RUN cd eigenlayer-cli && git checkout madhur/slashing-allocations && make build 
-
 
 FROM debian
 RUN apt-get update && apt-get install -y git curl bash
@@ -16,7 +8,9 @@ RUN curl -L https://foundry.paradigm.xyz | bash
 RUN bash -c 'source /root/.profile && foundryup'
 RUN cp -r /root/.foundry/bin/* /usr/local/bin/
 RUN adduser --uid 1000 foundry
-COPY --from=orig-cli /eigenlayer-cli/bin/eigenlayer /usr/local/bin/eigenlayer-orig
-COPY --from=holesky-cli /eigenlayer-cli/bin/eigenlayer /usr/local/bin/eigenlayer-holesky
+RUN curl -sSfL https://raw.githubusercontent.com/layr-labs/eigenlayer-cli/master/scripts/install.sh | sh -s -- v0.11.0
+RUN mv /root/bin/eigenlayer /usr/local/bin/eigenlayer-orig
+RUN curl -sSfL https://raw.githubusercontent.com/layr-labs/eigenlayer-cli/master/scripts/install.sh | sh -s -- v0.12.0-beta
+RUN mv /root/bin/eigenlayer /usr/local/bin/eigenlayer-holesky
 
 ENTRYPOINT ["/bin/sh", "-c"]
