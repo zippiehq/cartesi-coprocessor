@@ -1,19 +1,19 @@
 {
   "addresses": {
-    "apkRegistry": "0x81Ca8BA99E3D4c2064758AD633BE8457706e544a",
-    "apkRegistryImpl": "0x7888247a4E4194dE3C9bc2E30203f91cD72d4EAD",
-    "coprocessor": "0xCb3638865529A5Dc046e84C98c43e8fDE2Dc15f7",
-    "coprocessorImpl": "0x16926A218c0F03f57752624A793ff27ce0ded25D",
-    "indexRegistry": "0x6735936B8904B0f35207712c9A7DBEE6D823ea60",
-    "indexRegistryImpl": "0x452431457ea65282eF4eF1B88Cd8fbc70E704f4F",
-    "operatorStateRetriever": "0xAF9B43e8d9442979117D6b2F3A27d8B01B16E532",
-    "pauserRegistry": "0xDA71f3D56A746a954FeE5680df1Df48BD63b0a02",
-    "proxyAdmin": "0xF2eEaB29216854b75DdcFB98580943985Cdb8CB9",
-    "registryCoordinator": "0x3166fB8bf46CA160A81D147c7849220310E70dAB",
-    "registryCoordinatorImpl": "0x164CC45F002E3a7BC61EDb862a3Ef9712dB94bdf",
-    "serviceManager": "0xd9ee45c6ACE7A8d37C1294ebD668DFBBdA263F96",
-    "serviceManagerImpl": "0xA2E319BD1fc39DDC2BE35f03804207b004F0D5aB",
-    "stakeRegistry": "0xDCeF05356DFEC70649791dd72795038f316D2E2E",
-    "stakeRegistryImpl": "0xc59Ef09ACE3D50BBE749eDF658745F94eef4d5bf"
+    "apkRegistry": "0x41A185F75BA201Ac2B7fefFa8D07Cd0A49c701bc",
+    "apkRegistryImpl": "0x71343a7C91cFdf835Ca251ee23A05e40AC4e5B06",
+    "coprocessor": "0x040aA11898c940FAa11A5bc8458B125ef8d34686",
+    "coprocessorImpl": "0x4D8F7e3f960dab3177347fb3d4062e031b25f487",
+    "indexRegistry": "0x8b7faF14eE2F89f6e4AEFfE1e520B627859F7867",
+    "indexRegistryImpl": "0x433BAde682e941A1Fcf27ae996d93b125F438C77",
+    "operatorStateRetriever": "0x681007c13805491117D79C741a0dcC6DE5F6c47e",
+    "pauserRegistry": "0x412aEab4Dff614c9c3c9c8e30458B9dFCe84b2be",
+    "proxyAdmin": "0x0eB619Bf379a2130469b16f0b7a430Fb24559DE1",
+    "registryCoordinator": "0x7e49aCCA334DE567dBbaE9924A70655126f39289",
+    "registryCoordinatorImpl": "0xb5f67BDc94E065c4324F25bc5e130eb328eC0B04",
+    "serviceManager": "0x014A0003b7E61a72C6C77324b45F8B71D28E4F36",
+    "serviceManagerImpl": "0xD15006C7e57Da96Fb598A00d308f76aCCDF49F79",
+    "stakeRegistry": "0xA31667504f5c042080ebF14638EC5AF865102656",
+    "stakeRegistryImpl": "0xfB8b478A55481fd2DbD44f2f15610038DFF53295"
   }
 }
