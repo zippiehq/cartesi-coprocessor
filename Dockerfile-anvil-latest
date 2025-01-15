@@ -2,7 +2,7 @@ FROM golang:1.21.11 AS orig-cli
 WORKDIR /
 
 FROM debian
-RUN apt-get update && apt-get install -y git curl bash
+RUN apt-get update && apt-get install -y git curl bash jq
 
 RUN curl -L https://foundry.paradigm.xyz | bash
 RUN bash -c 'source /root/.profile && foundryup'
