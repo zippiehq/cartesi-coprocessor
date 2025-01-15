@@ -292,7 +292,8 @@ contract CoprocessorDeployer is Script, Utils {
                 CoprocessorServiceManager.initialize.selector,
                 contracts.coprocessor,
                 config.operatorWhitelistEnabled,
-                config.operatorWhitelist
+                config.operatorWhitelist,
+		config.communityMultisig
             )
         );
 

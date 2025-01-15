@@ -45,8 +45,10 @@ contract CoprocessorServiceManager is ServiceManagerBase {
     function initialize(
         ICoprocessor _coprocessor,
         bool _operatorWhitelistEnabled,
-        address[] calldata _operatorWhitelist
+        address[] calldata _operatorWhitelist,
+	address initialOwner
     ) public initializer() {
+	__ServiceManagerBase_init(initialOwner);
         coprocessor = _coprocessor;
 
         operatorWhitelister = _msgSender();
