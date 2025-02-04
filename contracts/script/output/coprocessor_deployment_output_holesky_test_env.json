@@ -1,0 +1,19 @@
+{
+  "addresses": {
+    "apkRegistry": "0x605B4003da3D30E7Fb16BA195d5eF6E0e12D3bC9",
+    "apkRegistryImpl": "0xE3277a1Fd038D8529f0bA57e3563a75b88B7e9Ec",
+    "coprocessor": "0x0F1e37f07Fd8Ef9366cd9b58F664a9D0856cE9e7",
+    "coprocessorImpl": "0xEbA8B340dB0CE0005c048A33C103f0a8B20571C9",
+    "indexRegistry": "0x69E257c18041d4935FB478a6D4b775803F0B088f",
+    "indexRegistryImpl": "0x8a5C14B81c1E0482a9aeBE6d851A367754556ca8",
+    "operatorStateRetriever": "0x07a8009CbAEbDb8B2Ceb59B778239aFAD848A3e1",
+    "pauserRegistry": "0x2d7482B6c7eD72154afc74B67325e54b67ED4d56",
+    "proxyAdmin": "0xf2B4a48A51c35e9ebED14878e8CA65c3b40FA328",
+    "registryCoordinator": "0xedDa00Fa677fBAe26dDAFcE00B40656B2FE7167C",
+    "registryCoordinatorImpl": "0xA86C0AA94d0B33aB288319F0fF37baAB1D923eF0",
+    "serviceManager": "0x5478Ad734b2a2B75757B8aB13313D9cd2C25F951",
+    "serviceManagerImpl": "0x67eD35A9d1Dfe7C25c1be5d7da8c57Ab826eFD5b",
+    "stakeRegistry": "0xF2d4eb163792E50afc6AeFA393852B9E4A68eBAd",
+    "stakeRegistryImpl": "0x7BCC267c25eEe9b4b667F3B2eCCa3beC636417D0"
+  }
+}
