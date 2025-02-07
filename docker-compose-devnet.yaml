@@ -31,7 +31,7 @@ services:
       - coprocessor-network
 
   operator:
-    image: ghcr.io/zippiehq/cartesi-coprocessor-operator:latest
+    image: ghcr.io/zippiehq/cartesi-coprocessor-operator:v1.0.0
     container_name: cartesi-coprocessor-operator
     ports:
       - 127.0.0.1:3033:3033
@@ -53,7 +53,7 @@ services:
       - coprocessor-network
 
   setup-operator:
-    image: ghcr.io/zippiehq/cartesi-coprocessor-operator:latest
+    image: ghcr.io/zippiehq/cartesi-coprocessor-operator:v1.0.0
     container_name: cartesi-coprocessor-setup-operator
     depends_on:
       anvil:
@@ -77,7 +77,7 @@ services:
       - coprocessor-network
 
   solver:
-    image: ghcr.io/zippiehq/cartesi-coprocessor-solver:latest
+    image: ghcr.io/zippiehq/cartesi-coprocessor-solver:v1.0.0
     container_name: cartesi-coprocessor-solver
     ports:
       - 127.0.0.1:3034:3034
