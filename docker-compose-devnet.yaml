@@ -156,8 +156,9 @@ services:
       - coprocessor-network
       
   llama-server:
-    image: ghcr.io/ggerganov/llama.cpp:server
+    hostname: llama-server
     container_name: llama-server
+    image: ghcr.io/ggerganov/llama.cpp:server
     profiles: 
       - llm
     volumes:
@@ -168,4 +169,6 @@ services:
      interval: 10s
      retries: 200
      start_period: 10s
+    networks:
+      - coprocessor-network
      
