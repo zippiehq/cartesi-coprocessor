@@ -1,24 +1,25 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
-
-import "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
-
-import "@eigenlayer/contracts/permissions/PauserRegistry.sol";
-import "@eigenlayer/contracts/core/StrategyManager.sol";
-import {StrategyBaseTVLLimits} from "@eigenlayer/contracts/strategies/StrategyBaseTVLLimits.sol";
-
-import "../src/ERC20Mock.sol";
-import {Utils} from "./utils/Utils.sol";
-import {CoprocessorDeployer} from "./CoprocessorDeployer.s.sol";
+pragma solidity ^0.8.27;
 
 import "forge-std/Test.sol";
 import "forge-std/Script.sol";
 import "forge-std/StdJson.sol";
 import "forge-std/console.sol";
+
+import "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
+
+import "@eigenlayer/permissions/PauserRegistry.sol";
+import "@eigenlayer/core/StrategyManager.sol";
+import {StrategyBaseTVLLimits} from "@eigenlayer/strategies/StrategyBaseTVLLimits.sol";
+
 import "../src/CoprocessorToL2.sol";
 import "../src/Mock_L2Coprocessor.sol";
 import "../src/Mock_L1_Sender.sol";
 import "../src/Mock_L2CoprocessorCaller.sol";
+
+import "../src/ERC20Mock.sol";
+import {Utils} from "./utils/Utils.sol";
+import {CoprocessorDeployer} from "./CoprocessorDeployer.s.sol";
 
 contract CoprocessorDeployerDevnet is CoprocessorDeployer {
     function run() external {

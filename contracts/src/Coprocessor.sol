@@ -1,17 +1,20 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.27;
 
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "@openzeppelin-upgrades/contracts/proxy/utils/Initializable.sol";
 import "@openzeppelin-upgrades/contracts/access/OwnableUpgradeable.sol";
-import "@eigenlayer/contracts/permissions/Pausable.sol";
-import "@eigenlayer-middleware/src/interfaces/IServiceManager.sol";
-import {BLSApkRegistry} from "@eigenlayer-middleware/src/BLSApkRegistry.sol";
-import {RegistryCoordinator} from "@eigenlayer-middleware/src/RegistryCoordinator.sol";
-import {BLSSignatureChecker, IRegistryCoordinator} from "@eigenlayer-middleware/src/BLSSignatureChecker.sol";
-import {OperatorStateRetriever} from "@eigenlayer-middleware/src/OperatorStateRetriever.sol";
+
+import "@eigenlayer/permissions/Pausable.sol";
+import "@eigenlayer-middleware/interfaces/IServiceManager.sol";
+import {BLSApkRegistry} from "@eigenlayer-middleware/BLSApkRegistry.sol";
+import {RegistryCoordinator} from "@eigenlayer-middleware/RegistryCoordinator.sol";
+import {BLSSignatureChecker} from "@eigenlayer-middleware/BLSSignatureChecker.sol";
+import {IRegistryCoordinator} from "@eigenlayer-middleware/interfaces/IRegistryCoordinator.sol";
+import {OperatorStateRetriever} from "@eigenlayer-middleware/OperatorStateRetriever.sol";
+import "@eigenlayer-middleware/libraries/BN254.sol";
+
 import {LibMerkle32} from "./LibMerkle32.sol";
-import "@eigenlayer-middleware/src/libraries/BN254.sol";
 import "./ICoprocessorCallback.sol";
 
 

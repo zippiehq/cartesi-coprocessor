@@ -5,30 +5,20 @@ libs = ["lib"]
 fs_permissions = [{ access = "read-write", path = "./"}]
 
 remappings = [
-    "@eigenlayer/=lib/eigenlayer-middleware/lib/eigenlayer-contracts/src/",
-    "@eigenlayer-scripts/=lib/eigenlayer-middleware/lib/eigenlayer-contracts/script/",
-    "@eigenlayer-middleware/=lib/eigenlayer-middleware/",
-    "@credible-squaring/=src/",
-    "@openzeppelin/=lib/eigenlayer-middleware/lib/eigenlayer-contracts/lib/openzeppelin-contracts/",
-    "@openzeppelin-upgrades/=lib/eigenlayer-middleware/lib/eigenlayer-contracts/lib/openzeppelin-contracts-upgradeable/",
     "forge-std/=lib/forge-std/src/",
 
+    "@eigenlayer/=lib/eigenlayer-middleware/lib/eigenlayer-contracts/src/contracts",
+    "@eigenlayer-test/=lib/eigenlayer-middleware/lib/eigenlayer-contracts/src/test",
+    "@eigenlayer-middleware/=lib/eigenlayer-middleware/src",
 
-
-
+    # We don't put "/contracts" in the path here, because eigenlayer puts "/contracts" in imports directly...
+    "@openzeppelin/=lib/eigenlayer-middleware/lib/eigenlayer-contracts/lib/openzeppelin-contracts-v4.9.0",
+    "@openzeppelin-upgrades/=lib/eigenlayer-middleware/lib/eigenlayer-contracts/lib/openzeppelin-contracts-upgradeable-v4.9.0",
 ]
 
 gas_reports = ["*"]
-
-# A list of ignored solc error codes
-
-# Enables or disables the optimizer
 optimizer = true
-# The number of optimizer runs
 optimizer_runs = 200
-# Whether or not to use the Yul intermediate representation compilation pipeline
 via_ir = false
-# Override the Solidity version (this overrides `auto_detect_solc`)
-solc_version = '0.8.20'
+solc_version = '0.8.27'
 
-# See more config options https://github.com/foundry-rs/foundry/tree/master/config

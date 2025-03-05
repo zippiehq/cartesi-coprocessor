@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.27;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+
 import "./ICoprocessorL2Sender.sol";
 import "./Coprocessor.sol";
 

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.27;
 
-import "@eigenlayer/contracts/libraries/BytesLib.sol";
-import "@eigenlayer-middleware/src/ServiceManagerBase.sol";
+import "@eigenlayer/libraries/BytesLib.sol";
+import "@eigenlayer-middleware/ServiceManagerBase.sol";
 
 import "../src/ICoprocessor.sol";
 import "../src/Errors.sol";

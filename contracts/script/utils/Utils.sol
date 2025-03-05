@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity ^0.8.9;
-
-import "@eigenlayer-middleware/src/interfaces/IRegistryCoordinator.sol";
-import "@eigenlayer/contracts/strategies/StrategyBase.sol";
-import "../../src/ERC20Mock.sol";
+pragma solidity ^0.8.27;
 
 import "forge-std/Script.sol";
 import "forge-std/StdJson.sol";
+
+import "@eigenlayer-middleware/interfaces/IRegistryCoordinator.sol";
+import "@eigenlayer/strategies/StrategyBase.sol";
+
+import "../../src/ERC20Mock.sol";
 
 contract Utils is Script {
     // Note that this fct will only work for the ERC20Mock that has a public mint function

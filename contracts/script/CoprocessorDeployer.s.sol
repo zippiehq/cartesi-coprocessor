@@ -1,17 +1,21 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.27;
+
+import "forge-std/Test.sol";
+import "forge-std/Script.sol";
+import "forge-std/StdJson.sol";
+import "forge-std/console.sol";
 
 import "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 
-import "@eigenlayer/contracts/permissions/PauserRegistry.sol";
-import {IDelegationManager} from "@eigenlayer/contracts/interfaces/IDelegationManager.sol";
-import "@eigenlayer/contracts/core/DelegationManager.sol";
-import {IAVSDirectory, AVSDirectory} from "@eigenlayer/contracts/core/AVSDirectory.sol";
-import {IStrategyManager, IStrategy} from "@eigenlayer/contracts/interfaces/IStrategyManager.sol";
-import "@eigenlayer/contracts/core/StrategyManager.sol";
-import {ISlasher} from "@eigenlayer/contracts/interfaces/ISlasher.sol";
-import {StrategyBaseTVLLimits} from "@eigenlayer/contracts/strategies/StrategyBaseTVLLimits.sol";
-import "@eigenlayer/test/mocks/EmptyContract.sol";
+import "@eigenlayer/permissions/PauserRegistry.sol";
+import {IDelegationManager} from "@eigenlayer/interfaces/IDelegationManager.sol";
+import "@eigenlayer/core/DelegationManager.sol";
+import {IAVSDirectory, AVSDirectory} from "@eigenlayer/core/AVSDirectory.sol";
+import {IStrategyManager, IStrategy} from "@eigenlayer/interfaces/IStrategyManager.sol";
+import "@eigenlayer/core/StrategyManager.sol";
+import {StrategyBaseTVLLimits} from "@eigenlayer/strategies/StrategyBaseTVLLimits.sol";
+import "@eigenlayer-test/mocks/EmptyContract.sol";
 
 import {
     IBLSApkRegistry,
@@ -19,22 +23,17 @@ import {
     IStakeRegistry,
     IRegistryCoordinator,
     RegistryCoordinator
-} from "@eigenlayer-middleware/src/RegistryCoordinator.sol";
-import {BLSApkRegistry} from "@eigenlayer-middleware/src/BLSApkRegistry.sol";
-import {IndexRegistry} from "@eigenlayer-middleware/src/IndexRegistry.sol";
-import {StakeRegistry} from "@eigenlayer-middleware/src/StakeRegistry.sol";
-import "@eigenlayer-middleware/src/OperatorStateRetriever.sol";
+} from "@eigenlayer-middleware/RegistryCoordinator.sol";
+import {BLSApkRegistry} from "@eigenlayer-middleware/BLSApkRegistry.sol";
+import {IndexRegistry} from "@eigenlayer-middleware/IndexRegistry.sol";
+import {StakeRegistry} from "@eigenlayer-middleware/StakeRegistry.sol";
+import "@eigenlayer-middleware/OperatorStateRetriever.sol";
 
 import {CoprocessorServiceManager, IServiceManager} from "../eigenlayer/CoprocessorServiceManager.sol";
 import {Coprocessor} from "../src/Coprocessor.sol";
 import "../src/ERC20Mock.sol";
 
 import {Utils} from "./utils/Utils.sol";
-
-import "forge-std/Test.sol";
-import "forge-std/Script.sol";
-import "forge-std/StdJson.sol";
-import "forge-std/console.sol";
 
 contract CoprocessorDeployer is Script, Utils {
     struct EigenLayerContracts {
