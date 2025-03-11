@@ -3,6 +3,7 @@ pragma solidity ^0.8.27;
 
 import "@eigenlayer/libraries/BytesLib.sol";
 import "@eigenlayer-middleware/ServiceManagerBase.sol";
+import "@eigenlayer-middleware/interfaces/IRegistryCoordinator.sol";
 
 import "../src/ICoprocessor.sol";
 import "../src/Errors.sol";
@@ -30,13 +31,19 @@ contract CoprocessorServiceManager is ServiceManagerBase {
 
     constructor(
         IAVSDirectory _avsDirectory,
-        IRegistryCoordinator _registryCoordinator,
-        IStakeRegistry _stakeRegistry
+        IRewardsCoordinator _rewardsCoordinator,
+        IPermissionController _permissionController,
+        IAllocationManager _allocationManager,
+        IStakeRegistry _stakeRegistry,
+        ISlashingRegistryCoordinator _registryCoordinator
     )
         ServiceManagerBase(
             _avsDirectory,
+            _rewardsCoordinator,
             _registryCoordinator,
-            _stakeRegistry
+            _stakeRegistry,
+            _permissionController,
+            _allocationManager
         )
     {
        _disableInitializers();
@@ -46,9 +53,9 @@ contract CoprocessorServiceManager is ServiceManagerBase {
         ICoprocessor _coprocessor,
         bool _operatorWhitelistEnabled,
         address[] calldata _operatorWhitelist,
-	address initialOwner
+	    address initialOwner
     ) public initializer() {
-	__ServiceManagerBase_init(initialOwner);
+	__ServiceManagerBase_init(initialOwner, initialOwner);
         coprocessor = _coprocessor;
 
         operatorWhitelister = _msgSender();

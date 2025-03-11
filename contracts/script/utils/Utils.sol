@@ -4,7 +4,7 @@ pragma solidity ^0.8.27;
 import "forge-std/Script.sol";
 import "forge-std/StdJson.sol";
 
-import "@eigenlayer-middleware/interfaces/IRegistryCoordinator.sol";
+import "@eigenlayer-middleware/interfaces/ISlashingRegistryCoordinator.sol";
 import "@eigenlayer/strategies/StrategyBase.sol";
 
 import "../../src/ERC20Mock.sol";
@@ -35,16 +35,16 @@ contract Utils is Script {
         }
     }
 
-    function convertOperatorStatusToString(IRegistryCoordinator.OperatorStatus operatorStatus)
+    function convertOperatorStatusToString(ISlashingRegistryCoordinator.OperatorStatus operatorStatus)
         public
         pure
         returns (string memory)
     {
-        if (operatorStatus == IRegistryCoordinator.OperatorStatus.NEVER_REGISTERED) {
+        if (operatorStatus == ISlashingRegistryCoordinatorTypes.OperatorStatus.NEVER_REGISTERED) {
             return "NEVER_REGISTERED";
-        } else if (operatorStatus == IRegistryCoordinator.OperatorStatus.REGISTERED) {
+        } else if (operatorStatus == ISlashingRegistryCoordinatorTypes.OperatorStatus.REGISTERED) {
             return "REGISTERED";
-        } else if (operatorStatus == IRegistryCoordinator.OperatorStatus.DEREGISTERED) {
+        } else if (operatorStatus == ISlashingRegistryCoordinatorTypes.OperatorStatus.DEREGISTERED) {
             return "DEREGISTERED";
         } else {
             return "UNKNOWN";

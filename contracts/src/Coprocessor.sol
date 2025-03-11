@@ -10,7 +10,7 @@ import "@eigenlayer-middleware/interfaces/IServiceManager.sol";
 import {BLSApkRegistry} from "@eigenlayer-middleware/BLSApkRegistry.sol";
 import {RegistryCoordinator} from "@eigenlayer-middleware/RegistryCoordinator.sol";
 import {BLSSignatureChecker} from "@eigenlayer-middleware/BLSSignatureChecker.sol";
-import {IRegistryCoordinator} from "@eigenlayer-middleware/interfaces/IRegistryCoordinator.sol";
+import {ISlashingRegistryCoordinator} from "@eigenlayer-middleware/interfaces/ISlashingRegistryCoordinator.sol";
 import {OperatorStateRetriever} from "@eigenlayer-middleware/OperatorStateRetriever.sol";
 import "@eigenlayer-middleware/libraries/BN254.sol";
 
@@ -22,7 +22,7 @@ contract Coprocessor is BLSSignatureChecker, OperatorStateRetriever, Initializab
     using BN254 for BN254.G1Point;
     using LibMerkle32 for bytes32[];
 
-    constructor(IRegistryCoordinator _registryCoordinator) BLSSignatureChecker(_registryCoordinator) {
+    constructor(ISlashingRegistryCoordinator _registryCoordinator) BLSSignatureChecker(_registryCoordinator) {
 	staleStakesForbidden = false;
     }
 
