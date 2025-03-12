@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.27;
-
+/*
 import {CoprocessorDeployer} from "./CoprocessorDeployer.s.sol";
 
 import "forge-std/Test.sol";
@@ -32,3 +32,4 @@ contract CoprocessorDeployerHoleskyReal is CoprocessorDeployer {
         writeDeploymentOutput(contracts, auxContracts, outputPath);
     }
 }
+*/

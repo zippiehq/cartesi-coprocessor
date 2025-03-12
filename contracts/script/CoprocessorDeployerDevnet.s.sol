@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.27;
-
+/*
 import "forge-std/Test.sol";
 import "forge-std/Script.sol";
 import "forge-std/StdJson.sol";
@@ -100,3 +100,4 @@ contract CoprocessorDeployerDevnet is CoprocessorDeployer {
         return (address(erc20MockStrategy), address(erc20Mock));
     }
 }
+*/

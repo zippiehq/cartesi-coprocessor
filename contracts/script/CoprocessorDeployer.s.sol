@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.27;
-
+/*
 import "forge-std/Test.sol";
 import "forge-std/Script.sol";
 import "forge-std/StdJson.sol";
@@ -14,6 +14,9 @@ import "@eigenlayer/core/DelegationManager.sol";
 import {IAVSDirectory, AVSDirectory} from "@eigenlayer/core/AVSDirectory.sol";
 import {IStrategyManager, IStrategy} from "@eigenlayer/interfaces/IStrategyManager.sol";
 import "@eigenlayer/core/StrategyManager.sol";
+import "@eigenlayer/core/RewardsCoordinator.sol";
+import "@eigenlayer/core/AllocationManager.sol";
+import "@eigenlayer/permissions/PermissionController.sol";
 import {StrategyBaseTVLLimits} from "@eigenlayer/strategies/StrategyBaseTVLLimits.sol";
 import "@eigenlayer-test/mocks/EmptyContract.sol";
 
@@ -27,7 +30,9 @@ import {
 import {BLSApkRegistry} from "@eigenlayer-middleware/BLSApkRegistry.sol";
 import {IndexRegistry} from "@eigenlayer-middleware/IndexRegistry.sol";
 import {StakeRegistry} from "@eigenlayer-middleware/StakeRegistry.sol";
+
 import "@eigenlayer-middleware/OperatorStateRetriever.sol";
+
 
 import {CoprocessorServiceManager, IServiceManager} from "../eigenlayer/CoprocessorServiceManager.sol";
 import {Coprocessor} from "../src/Coprocessor.sol";
@@ -37,12 +42,16 @@ import {Utils} from "./utils/Utils.sol";
 
 contract CoprocessorDeployer is Script, Utils {
     struct EigenLayerContracts {
-        IAVSDirectory avsDirectory;
         DelegationManager delegationManager;
         StrategyManager strategyManager;
+        IAVSDirectory avsDirectory;
+        IRewardsCoordinator rewardsCoordinator;
+        IAllocationManager allocationManager;
+        IPermissionController permissionController;
         ProxyAdmin proxyAdmin;
         PauserRegistry pauserRegistry;
         StrategyBaseTVLLimits baseStrategy;
+        
         address wETH;
         uint96 wETH_Multiplier;
         address rETH;
@@ -107,9 +116,12 @@ contract CoprocessorDeployer is Script, Utils {
         {
             string memory configData = vm.readFile(filePath);
 
+            eigenLayer.delegationManager = DelegationManager(stdJson.readAddress(configData, ".delegationManager"));
             eigenLayer.strategyManager = StrategyManager(stdJson.readAddress(configData, ".strategyManager"));
             eigenLayer.avsDirectory = AVSDirectory(stdJson.readAddress(configData, ".avsDirectory"));
-            eigenLayer.delegationManager = DelegationManager(stdJson.readAddress(configData, ".delegationManager"));
+            eigenLayer.rewardsCoordinator = RewardsCoordinator(stdJson.readAddress(configData, ".rewardsCoordinator"));
+            eigenLayer.allocationManager = AllocationManager(stdJson.readAddress(configData, ".allocationManager"));
+            eigenLayer.permissionController = PermissionController(stdJson.readAddress(configData, ".permissionController"));
             eigenLayer.proxyAdmin = ProxyAdmin(stdJson.readAddress(configData, ".proxyAdmin"));
             eigenLayer.pauserRegistry = PauserRegistry(stdJson.readAddress(configData, ".pauserRegistry"));
             eigenLayer.baseStrategy =
@@ -161,14 +173,13 @@ contract CoprocessorDeployer is Script, Utils {
 
         EmptyContract emptyContract = new EmptyContract();
 
-        /**
-         * First, deploy upgradeable proxy contracts that **will point** to the implementations. Since the implementation contracts are
-         * not yet deployed, we give these proxies an empty contract as the initial implementation, to act as if they have no code.
-         */
+        
+        // First, deploy upgradeable proxy contracts that **will point** to the implementations. Since the implementation contracts are
+        // not yet deployed, we give these proxies an empty contract as the initial implementation, to act as if they have no code.
+        
         contracts.indexRegistry = IIndexRegistry(
             address(new TransparentUpgradeableProxy(address(emptyContract), address(contracts.proxyAdmin), ""))
         );
-
         contracts.stakeRegistry = IStakeRegistry(
             address(new TransparentUpgradeableProxy(address(emptyContract), address(contracts.proxyAdmin), ""))
         );
@@ -328,3 +339,4 @@ contract CoprocessorDeployer is Script, Utils {
         vm.writeJson(finalJson, outputPath);
     }
 }
+*/
