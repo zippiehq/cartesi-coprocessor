@@ -47,6 +47,7 @@ services:
       ALWAYS_CONSOLE_PUTCHAR: true
       SNAPSHOT_DIR: /operator-snapshots
       LLAMA_SERVER: http://llama-server:8080
+      RUST_LOG: info
       BLS_PRIVATE_KEY: ${OPERATOR_BLS_KEY:-13219903133444082589215719304558031505888625714969126489655808257015621956774}
       IPFS_DAEMON_OFFLINE: ${IPFS_DAEMON_ONLINE-true}
     networks:
@@ -89,7 +90,7 @@ services:
     volumes:
       - ./config-devnet.toml:/cartesi-coprocessor-solver/config.toml
     environment:
-      - RUST_LOG=infoe
+      - RUST_LOG: info
     networks:
       - coprocessor-network
 
