@@ -59,5 +59,6 @@ jobs:
 
           echo "Calling issue_task endpoint..."
           curl -X POST "http://localhost:3034/issue_task/11084eeb3de8d6ad262736d1f59b129fc9c134ab52248d39c2c920facafe8403/0xA44151489861Fe9e3055d95adC98FbD462B948e7" -d "example"
+          docker compose -f docker-compose-devnet.yaml logs
 
           echo "Sanity check completed successfully."
