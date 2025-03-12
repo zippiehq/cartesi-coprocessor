@@ -89,7 +89,7 @@ services:
     volumes:
       - ./config-devnet.toml:/cartesi-coprocessor-solver/config.toml
     environment:
-      - RUST_LOG=trace
+      - RUST_LOG=infoe
     networks:
       - coprocessor-network
 
