@@ -146,7 +146,7 @@ library CoprocessorDeploymentLib {
             )
         );
         */
-
+       
         // Deploy SlashingRegistryCoordinator 
         address registryCoordinatorImpl = address( 
             new SlashingRegistryCoordinator(
@@ -164,23 +164,6 @@ library CoprocessorDeploymentLib {
         pausers[0] = admin;
         pausers[1] = admin;
         result.pauserRegistry = address(new PauserRegistry(pausers, admin));
-
-        // Deploy Coprocessor
-        address coprocessorImpl = address(
-            new Coprocessor(ISlashingRegistryCoordinator(registryCoordinatorImpl))
-        );
-
-        // Deploy CoprocessorServiceManager
-        address coprocessorSerivceManagerImpl = address(
-            new CoprocessorServiceManager(
-                IAVSDirectory(el_deployment.avsDirectory),
-                IRewardsCoordinator(el_deployment.rewardsCoordinator),
-                IPermissionController(el_deployment.permissionController),
-                IAllocationManager(el_deployment.allocationManager),
-                IStakeRegistry(stakeRegistryImpl),
-                ISlashingRegistryCoordinator(registryCoordinatorImpl)
-            )
-        );
 
         // 3. Upgrade the proxy contracts to use the correct implementation contracts and initialize them
         
@@ -200,6 +183,23 @@ library CoprocessorDeploymentLib {
         );
         UpgradeableProxyLib.upgradeAndCall(
             result.registryCoordinator, registryCoordinatorImpl, registryCoordinatorUpgradeCall
+        );
+
+         // Deploy Coprocessor
+        address coprocessorImpl = address(
+            new Coprocessor(ISlashingRegistryCoordinator(registryCoordinatorImpl))
+        );
+
+        // Deploy CoprocessorServiceManager
+        address coprocessorSerivceManagerImpl = address(
+            new CoprocessorServiceManager(
+                IAVSDirectory(el_deployment.avsDirectory),
+                IRewardsCoordinator(el_deployment.rewardsCoordinator),
+                IPermissionController(el_deployment.permissionController),
+                IAllocationManager(el_deployment.allocationManager),
+                IStakeRegistry(stakeRegistryImpl),
+                ISlashingRegistryCoordinator(registryCoordinatorImpl)
+            )
         );
 
         // Upgrade and initialize Coprocessor
@@ -317,68 +317,28 @@ library CoprocessorDeploymentLib {
         Deployment memory deployment,
         string memory filePath
     ) internal {
-        string memory deploymentJson = _generateDeploymentJson(deployment);
-        vm.writeFile(filePath, deploymentJson);
-    }
-
-    function _generateDeploymentJson(
-        Deployment memory deployment
-    ) private view returns (string memory) {
-        return string.concat(
-            '{"lastUpdate":{"timestamp":"',
-            vm.toString(block.timestamp),
-            '","block_number":"',
-            vm.toString(block.number),
-            '"},"addresses":',
-            _generateContractsJson(deployment),
-            "}"
-        );
-    }
-
-    function _generateContractsJson(
-        Deployment memory deployment
-    ) private view returns (string memory) {
-        return string.concat(
-            '{"proxyAdmin":"',
-            deployment.proxyAdmin.toHexString(),
-            
-            '","coprocessor":"',
-            deployment.coprocessor.toHexString(),
-            '","coprocessorServiceManager":"',
-            deployment.coprocessorServiceManager.toHexString(),
-            '","registryCoordinator":"',
-            deployment.registryCoordinator.toHexString(),
-            '","operatorStateRetriever":"',
-            deployment.operatorStateRetriever.toHexString(),
-            '","blsApkRegistry":"',
-            deployment.blsApkRegistry.toHexString(),
-            '","indexRegistry":"',
-            deployment.indexRegistry.toHexString(),
-            '","stakeRegistry":"',
-            deployment.stakeRegistry.toHexString(),
-            '","socketRegistry":"',
-            deployment.socketRegistry.toHexString(),
-            '","pauserRegistry":"',
-            deployment.pauserRegistry.toHexString(),
-            /*
-            '","instantSlasher":"',
-            data.slasher.toHexString(),
-            */
-
-            '","strategyToken":"',
-            deployment.strategyToken.toHexString(),
-            '","strategy":"',
-            deployment.strategy.toHexString(),
-
-            '","L2Coprocessor":"',
-            deployment.L2Coprocessor.toHexString(),
-            '","L2CoprocessorCaller":"',
-            deployment.L2CoprocessorCaller.toHexString(),
-            '","L1Sender":"',
-            deployment.L1Sender.toHexString(),
-            '","CoprocessorToL2":"',
-            deployment.coprocessorToL2.toHexString(),
-            '"}'
-        );
+         string memory parentObject = "parent object";
+        
+        string memory addresses = "addresses";
+        vm.serializeAddress(addresses, "proxyAdmin", address(deployment.proxyAdmin));
+        vm.serializeAddress(addresses, "coprocessor", address(deployment.coprocessor));
+        vm.serializeAddress(addresses, "coprocessorServiceManager", address(deployment.coprocessorServiceManager));
+        vm.serializeAddress(addresses, "registryCoordinator", address(deployment.registryCoordinator));
+        vm.serializeAddress(addresses, "operatorStateRetriever", address(deployment.operatorStateRetriever));
+        vm.serializeAddress(addresses, "blsApkRegistry", address(deployment.blsApkRegistry));
+        vm.serializeAddress(addresses, "indexRegistry", address(deployment.indexRegistry));
+        vm.serializeAddress(addresses, "stakeRegistry", address(deployment.stakeRegistry));
+        vm.serializeAddress(addresses, "socketRegistry", address(deployment.socketRegistry));
+        vm.serializeAddress(addresses, "pauserRegistry", address(deployment.pauserRegistry));
+        vm.serializeAddress(addresses, "strategyToken", address(deployment.strategyToken));
+        vm.serializeAddress(addresses, "strategy", address(deployment.strategy));
+        vm.serializeAddress(addresses, "L2Coprocessor", address(deployment.L2Coprocessor));
+        vm.serializeAddress(addresses, "L2CoprocessorCaller", address(deployment.L2CoprocessorCaller));
+        vm.serializeAddress(addresses, "L1Sender", address(deployment.L1Sender));
+        string memory adressesJson =
+            vm.serializeAddress(addresses, "coprocessorToL2", address(deployment.coprocessorToL2));
+        
+        string memory deploymentJson = vm.serializeString(parentObject, addresses, adressesJson);
+        vm.writeJson(deploymentJson, filePath);
     }
 }

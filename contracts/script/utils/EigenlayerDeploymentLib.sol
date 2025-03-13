@@ -389,13 +389,17 @@ library EigenlayerDeploymentLib {
         string memory json = vm.readFile(pathToFile);
 
         Deployment memory deployment;
-        deployment.strategyFactory = json.readAddress(".addresses.strategyFactory");
-        deployment.strategyManager = json.readAddress(".addresses.strategyManager");
-        deployment.eigenPodManager = json.readAddress(".addresses.eigenPodManager");
+        deployment.proxyAdmin = json.readAddress(".addresses.proxyAdmin");
         deployment.delegationManager = json.readAddress(".addresses.delegation");
         deployment.avsDirectory = json.readAddress(".addresses.avsDirectory");
-        deployment.rewardsCoordinator = json.readAddress(".addresses.rewardsCoordinator");
+        deployment.strategyManager = json.readAddress(".addresses.strategyManager");
+        deployment.eigenPodManager = json.readAddress(".addresses.eigenPodManager");
         deployment.allocationManager = json.readAddress(".addresses.allocationManager");
+        deployment.rewardsCoordinator = json.readAddress(".addresses.rewardsCoordinator");
+        deployment.eigenPodBeacon = json.readAddress(".addresses.eigenPodBeacon");
+        deployment.pauserRegistry = json.readAddress(".addresses.pauserRegistry");
+        deployment.strategyFactory = json.readAddress(".addresses.strategyFactory");
+        deployment.strategyBeacon = json.readAddress(".addresses.strategyBeacon");
         deployment.permissionController = json.readAddress(".addresses.permissionController");
 
         return deployment;
@@ -409,7 +413,7 @@ library EigenlayerDeploymentLib {
         
         string memory addresses = "addresses";
         vm.serializeAddress(addresses, "proxyAdmin", address(deployment.proxyAdmin));
-        vm.serializeAddress(addresses, "delegationManaager", address(deployment.delegationManager));
+        vm.serializeAddress(addresses, "delegation", address(deployment.delegationManager));
         vm.serializeAddress(addresses, "avsDirectory", address(deployment.avsDirectory));
         vm.serializeAddress(addresses, "strategyManager", address(deployment.strategyManager));
         vm.serializeAddress(addresses, "eigenPodManager", address(deployment.eigenPodManager));

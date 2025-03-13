@@ -12,8 +12,7 @@ import {EigenlayerDeploymentLib} from "./utils/EigenlayerDeploymentLib.sol";
 import {CoprocessorDeploymentLib} from "./utils/CoprocessorDeploymentLib.sol";
 import {FundOperatorLib} from "./utils/FundOperatorLib.sol";
 
-// # To deploy and verify our contract
-// forge script script/IncredibleSquaringDeployer.s.sol:IncredibleSquaringDeployer --rpc-url $RPC_URL  --private-key $PRIVATE_KEY --broadcast -vvvv
+// forge script script/DevnetCoprocessorDeployer.s.sol:DevnetCoprocessorDeployer --rpc-url $RPC_URL  --private-key $PRIVATE_KEY --broadcast -vvvv
 
 contract DevnetCoprocessorDeployer is Script {
     function run() external {
@@ -38,7 +37,7 @@ contract DevnetCoprocessorDeployer is Script {
             );
 
         CoprocessorDeploymentLib
-            .writeDeployment(deployment, "./script/output/devnet_eigenlayer_deployment.json");
+            .writeDeployment(deployment, "./script/output/devnet_coprocessor_deployment.json");
                 
         vm.stopBroadcast();
     }

@@ -10,8 +10,7 @@ import "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 
 import {EigenlayerDeploymentLib} from "./utils/EigenlayerDeploymentLib.sol";
 
-// # To deploy and verify our contract
-// forge script script/IncredibleSquaringDeployer.s.sol:IncredibleSquaringDeployer --rpc-url $RPC_URL  --private-key $PRIVATE_KEY --broadcast -vvvv
+// forge script script/DevnetEigenlayerDeployer.s.sol:DevnetEigenlayerDeployer --rpc-url $RPC_URL  --private-key $PRIVATE_KEY --broadcast -vvvv
 
 contract DevnetEigenlayerDeployer is Script {
     function run() external {
