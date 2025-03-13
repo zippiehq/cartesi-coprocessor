@@ -84,6 +84,7 @@ library EigenlayerDeploymentLib {
     }
 
     struct Deployment {
+        address proxyAdmin;
         address delegationManager;
         address avsDirectory;
         address strategyManager;
@@ -98,28 +99,27 @@ library EigenlayerDeploymentLib {
     }
 
     function deployContracts(
-        address deployer,
-        address proxyAdmin,
-        DeploymentConfig memory config
+        DeploymentConfig memory config,
+        address deployer
     ) internal returns (Deployment memory) {
         Deployment memory result;
 
-        result.delegationManager = UpgradeableProxyLib.setUpEmptyProxy(proxyAdmin);
-        result.avsDirectory = UpgradeableProxyLib.setUpEmptyProxy(proxyAdmin);
-        result.strategyManager = UpgradeableProxyLib.setUpEmptyProxy(proxyAdmin);
-        result.allocationManager = UpgradeableProxyLib.setUpEmptyProxy(proxyAdmin);
-        result.avsDirectory = UpgradeableProxyLib.setUpEmptyProxy(proxyAdmin);
-        result.rewardsCoordinator = UpgradeableProxyLib.setUpEmptyProxy(proxyAdmin);
-        result.eigenPodBeacon = UpgradeableProxyLib.setUpEmptyProxy(proxyAdmin);
+        result.proxyAdmin = UpgradeableProxyLib.deployProxyAdmin();
+        result.delegationManager = UpgradeableProxyLib.setUpEmptyProxy(result.proxyAdmin);
+        result.avsDirectory = UpgradeableProxyLib.setUpEmptyProxy(result.proxyAdmin);
+        result.strategyManager = UpgradeableProxyLib.setUpEmptyProxy(result.proxyAdmin);
+        result.eigenPodManager = UpgradeableProxyLib.setUpEmptyProxy(result.proxyAdmin);
+        result.allocationManager = UpgradeableProxyLib.setUpEmptyProxy(result.proxyAdmin);
+        result.rewardsCoordinator = UpgradeableProxyLib.setUpEmptyProxy(result.proxyAdmin);
+        result.eigenPodBeacon = UpgradeableProxyLib.setUpEmptyProxy(result.proxyAdmin);
         result.pauserRegistry = address(
             new PauserRegistry(
                 new address[](0), // Empty array for pausers
-                proxyAdmin // ProxyAdmin as the unpauser
+                result.proxyAdmin // ProxyAdmin as the unpauser
             )
         );
-        result.strategyFactory = UpgradeableProxyLib.setUpEmptyProxy(proxyAdmin);
-        result.eigenPodManager = UpgradeableProxyLib.setUpEmptyProxy(proxyAdmin);
-        result.permissionController = UpgradeableProxyLib.setUpEmptyProxy(proxyAdmin);
+        result.strategyFactory = UpgradeableProxyLib.setUpEmptyProxy(result.proxyAdmin);
+        result.permissionController = UpgradeableProxyLib.setUpEmptyProxy(result.proxyAdmin);
 
         // Deploy the implementation contracts, using the proxy contracts as inputs
         address delegationManagerImpl = address(
@@ -229,7 +229,7 @@ library EigenlayerDeploymentLib {
         bytes memory upgradeCall = abi.encodeCall(
             DelegationManager.initialize,
             (
-                proxyAdmin, // initialOwner
+                result.proxyAdmin, // initialOwner
                 // IPauserRegistry(result.pauserRegistry), // _pauserRegistry
                 config.delegationManager.initPausedStatus // initialPausedStatus
             )
@@ -242,7 +242,7 @@ library EigenlayerDeploymentLib {
         upgradeCall = abi.encodeCall(
             StrategyManager.initialize,
             (
-                proxyAdmin, // initialOwner
+                result.proxyAdmin, // initialOwner
                 result.strategyFactory, // initialStrategyWhitelister
                 // IPauserRegistry(result.pauserRegistry), // _pauserRegistry
                 config.strategyManager.initPausedStatus // initialPausedStatus
@@ -256,7 +256,7 @@ library EigenlayerDeploymentLib {
         upgradeCall = abi.encodeCall(
             StrategyFactory.initialize,
             (
-                proxyAdmin, // initialOwner
+                result.proxyAdmin, // initialOwner
                 // IPauserRegistry(result.pauserRegistry), // _pauserRegistry
                 config.strategyFactory.initPausedStatus, // initialPausedStatus
                 IBeacon(result.strategyBeacon)
@@ -268,7 +268,7 @@ library EigenlayerDeploymentLib {
         upgradeCall = abi.encodeCall(
             EigenPodManager.initialize,
             (
-                proxyAdmin, // initialOwner
+                result.proxyAdmin, // initialOwner
                 // IPauserRegistry(result.pauserRegistry), // _pauserRegistry
                 config.eigenPodManager.initPausedStatus // initialPausedStatus
             )
@@ -279,7 +279,7 @@ library EigenlayerDeploymentLib {
         upgradeCall = abi.encodeCall(
             AVSDirectory.initialize,
             (
-                proxyAdmin, // initialOwner
+                result.proxyAdmin, // initialOwner
                 // IPauserRegistry(result.pauserRegistry), // _pauserRegistry
                 0 // TODO: AVS Missing configinitialPausedStatus
             )
@@ -341,23 +341,20 @@ library EigenlayerDeploymentLib {
 
         DeploymentConfig memory config;
 
-        // StrategyManager start
+        // StrategyManager
         config.strategyManager.initPausedStatus = json.readUint(".strategyManager.init_paused_status");
         config.strategyManager.initWithdrawalDelayBlocks =
             uint32(json.readUint(".strategyManager.init_withdrawal_delay_blocks"));
-        // StrategyManager config end
-
-        // DelegationManager config start
+        
+        // DelegationManager
         config.delegationManager.initPausedStatus = json.readUint(".delegation.init_paused_status");
         config.delegationManager.withdrawalDelayBlocks =
             json.readUint(".delegation.init_withdrawal_delay_blocks");
-        // DelegationManager config end
-
-        // EigenPodManager config start
+        
+        // EigenPodManager
         config.eigenPodManager.initPausedStatus = json.readUint(".eigenPodManager.init_paused_status");
-        // EigenPodManager config end
 
-        // RewardsCoordinator config start
+        // RewardsCoordinator
         config.rewardsCoordinator.initPausedStatus =
             json.readUint(".rewardsCoordinator.init_paused_status");
         config.rewardsCoordinator.maxRewardsDuration =
@@ -376,7 +373,10 @@ library EigenlayerDeploymentLib {
             json.readUint(".rewardsCoordinator.calculation_interval_seconds");
         config.rewardsCoordinator.globalOperatorCommissionBips =
             json.readUint(".rewardsCoordinator.global_operator_commission_bips");
-        // RewardsCoordinator config end
+
+        // StrategyFactory
+        config.strategyManager.initPausedStatus = 
+            json.readUint(".strategyFactory.init_paused_status");
 
         return config;
     }
@@ -401,69 +401,29 @@ library EigenlayerDeploymentLib {
         return deployment;
     }
 
-    function writeDeploymentJson(
+    function writeDeployment(
         Deployment memory deployment,
         string memory filePath
     ) internal {
-        address proxyAdmin = address(
-                UpgradeableProxyLib.getProxyAdmin(deployment.strategyManager)
-        );
-        string memory deploymentJson = _generateDeploymentJson(deployment, proxyAdmin);
-        vm.writeFile(filePath, deploymentJson);
-    }
-
-    function _generateDeploymentJson(
-        Deployment memory data,
-        address proxyAdmin
-    ) private view returns (string memory) {
-        return string.concat(
-            '{"lastUpdate":{"timestamp":"',
-            vm.toString(block.timestamp),
-            '","block_number":"',
-            vm.toString(block.number),
-            '"},"addresses":',
-            _generatDeploymentContractsJson(data, proxyAdmin),
-            "}"
-        );
-    }
-
-    function _generatDeploymentContractsJson(
-        Deployment memory data,
-        address proxyAdmin
-    ) private view returns (string memory) {
-        /// TODO: namespace contracts -> {avs, core}
-        return string.concat(
-            '{"proxyAdmin":"',
-            proxyAdmin.toHexString(),
-            '","delegation":"',
-            data.delegationManager.toHexString(),
-            '","delegationManagerImpl":"',
-            data.delegationManager.getImplementation().toHexString(),
-            '","avsDirectory":"',
-            data.avsDirectory.toHexString(),
-            '","avsDirectoryImpl":"',
-            data.avsDirectory.getImplementation().toHexString(),
-            '","strategyManager":"',
-            data.strategyManager.toHexString(),
-            '","strategyManagerImpl":"',
-            data.strategyManager.getImplementation().toHexString(),
-            '","eigenPodManager":"',
-            data.eigenPodManager.toHexString(),
-            '","eigenPodManagerImpl":"',
-            data.eigenPodManager.getImplementation().toHexString(),
-            '","strategyFactory":"',
-            data.strategyFactory.toHexString(),
-            '","rewardsCoordinator":"',
-            data.rewardsCoordinator.toHexString(),
-            '","pauserRegistry":"',
-            data.pauserRegistry.toHexString(),
-            '","strategyBeacon":"',
-            data.strategyBeacon.toHexString(),
-            '","allocationManager":"',
-            data.allocationManager.toHexString(),
-            '","permissionController":"',
-            data.permissionController.toHexString(),
-            '"}'
-        );
+        string memory parentObject = "parent object";
+        
+        string memory addresses = "addresses";
+        vm.serializeAddress(addresses, "proxyAdmin", address(deployment.proxyAdmin));
+        vm.serializeAddress(addresses, "delegationManaager", address(deployment.delegationManager));
+        vm.serializeAddress(addresses, "avsDirectory", address(deployment.avsDirectory));
+        vm.serializeAddress(addresses, "strategyManager", address(deployment.strategyManager));
+        vm.serializeAddress(addresses, "eigenPodManager", address(deployment.eigenPodManager));
+        vm.serializeAddress(addresses, "allocationManager", address(deployment.allocationManager));
+        vm.serializeAddress(addresses, "rewardsCoordinator", address(deployment.rewardsCoordinator));
+        vm.serializeAddress(addresses, "eigenPodBeacon", address(deployment.eigenPodBeacon));
+        vm.serializeAddress(addresses, "pauserRegistry", address(deployment.pauserRegistry));
+        vm.serializeAddress(addresses, "strategyFactory", address(deployment.strategyFactory));
+        vm.serializeAddress(addresses, "strategyBeacon", address(deployment.strategyBeacon));
+        vm.serializeAddress(addresses, "permissionController", address(deployment.permissionController));
+        string memory adressesJson =
+            vm.serializeAddress(addresses, "permissionController", address(deployment.permissionController));
+        
+        string memory deploymentJson = vm.serializeString(parentObject, addresses, adressesJson);
+        vm.writeJson(deploymentJson, filePath);
     }
 }
