@@ -1,26 +1,43 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.27;
 
-// !!!
-/*
 import "forge-std/Script.sol";
-import "forge-std/StdJson.sol";
+import "forge-std/console.sol";
+
+import {IDelegationManager} from "@eigenlayer/interfaces/IDelegationManager.sol";
 
 import "@eigenlayer-middleware/interfaces/ISlashingRegistryCoordinator.sol";
-import "@eigenlayer/strategies/StrategyBase.sol";
 
 import "../../src/ERC20Mock.sol";
 
-contract Utils is Script {
-    // Note that this fct will only work for the ERC20Mock that has a public mint function
-    function _mintTokens(address strategyAddress, address[] memory tos, uint256[] memory amounts) internal {
-        for (uint256 i = 0; i < tos.length; i++) {
-            ERC20Mock underlyingToken = ERC20Mock(address(StrategyBase(strategyAddress).underlyingToken()));
-            underlyingToken.mint(tos[i], amounts[i]);
-        }
+import "./EigenlayerDeploymentLib.sol";
+
+contract DeployerBase is Script {
+    function sendEther(address sender, address to, uint256 value) public payable {
+        vm.startPrank(sender);
+        payable(to).transfer(value);
+        vm.stopPrank();
     }
 
-    // TODO: this doesn't actually advance by n blocks... maybe because broadcasting batches txs somehow..?
+    function mintToken(address minter, address erc20, address to, uint256 amount) internal {
+        vm.startPrank(minter);
+        ERC20Mock(erc20).mint(to, amount);
+        vm.stopPrank();
+    }
+
+    function registerOperator(
+        EigenlayerDeploymentLib.Deployment memory deployment,
+        address operator
+    ) internal {
+        vm.startPrank(operator);
+        IDelegationManager(deployment.delegationManager).registerAsOperator(
+            0x0000000000000000000000000000000000000000,
+            0,
+            "https://raw.githubusercontent.com/tantatnhan/chainbase/refs/heads/main/metadata.json"
+        ); 
+        vm.stopPrank();
+    }
+
     function advanceChainByNBlocks(uint256 n) public {
         for (uint256 i = 0; i < n; i++) {
             // we transfer eth to ourselves to advance the block
@@ -75,4 +92,3 @@ contract Utils is Script {
         vm.writeJson(outputJson, outputFilePath);
     }
 }
-*/
