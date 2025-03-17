@@ -6,13 +6,21 @@ import "forge-std/console.sol";
 
 import {IDelegationManager} from "@eigenlayer/interfaces/IDelegationManager.sol";
 
+import "@eigenlayer/interfaces/IStrategy.sol";
+import "@eigenlayer/interfaces/IStrategyManager.sol";
 import "@eigenlayer-middleware/interfaces/ISlashingRegistryCoordinator.sol";
 
 import "../../src/ERC20Mock.sol";
 
+import "./CoprocessorDeploymentLib.sol";
 import "./EigenlayerDeploymentLib.sol";
 
-contract DeployerBase is Script {
+contract CoprocessorDeployerBase is Script {
+    EigenlayerDeploymentLib.Deployment el_deployment;
+    CoprocessorDeploymentLib.DeploymentConfig config;
+
+    CoprocessorDeploymentLib.Deployment deployment;
+    
     function sendEther(address sender, address to, uint256 value) public payable {
         vm.startPrank(sender);
         payable(to).transfer(value);
@@ -25,16 +33,26 @@ contract DeployerBase is Script {
         vm.stopPrank();
     }
 
-    function registerOperator(
-        EigenlayerDeploymentLib.Deployment memory deployment,
-        address operator
-    ) internal {
+    function registerOperatorWithEigenLayer(address operator) internal {
         vm.startPrank(operator);
-        IDelegationManager(deployment.delegationManager).registerAsOperator(
+        IDelegationManager(el_deployment.delegationManager).registerAsOperator(
             0x0000000000000000000000000000000000000000,
             0,
             "https://raw.githubusercontent.com/tantatnhan/chainbase/refs/heads/main/metadata.json"
         ); 
+        vm.stopPrank();
+    }
+
+    function depositIntoStrategy(
+        address operator,
+        address startegy,
+        uint256 amount
+    ) internal {
+        vm.startPrank(operator);
+        IERC20 erc20 = IStrategy(startegy).underlyingToken();
+        erc20.approve(el_deployment.strategyManager, amount);
+        IStrategyManager(el_deployment.strategyManager)
+            .depositIntoStrategy(IStrategy(startegy), erc20, amount);
         vm.stopPrank();
     }
 

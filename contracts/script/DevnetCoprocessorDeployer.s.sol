@@ -11,16 +11,11 @@ import "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 
 import {EigenlayerDeploymentLib} from "./utils/EigenlayerDeploymentLib.sol";
 import {CoprocessorDeploymentLib} from "./utils/CoprocessorDeploymentLib.sol";
-import {DeployerBase} from "./utils/DeployerBase.sol";
+import {CoprocessorDeployerBase} from "./utils/CoprocessorDeployerBase.sol";
 
 // forge script script/DevnetCoprocessorDeployer.s.sol:DevnetCoprocessorDeployer --rpc-url $RPC_URL  --private-key $PRIVATE_KEY --broadcast -vvvv
 
-contract DevnetCoprocessorDeployer is DeployerBase {
-    EigenlayerDeploymentLib.Deployment el_deployment;
-    CoprocessorDeploymentLib.DeploymentConfig config;
-
-    CoprocessorDeploymentLib.Deployment deployment;
-    
+contract DevnetCoprocessorDeployer is CoprocessorDeployerBase {
     function run() external {
         // Eigenlayer contracts
         vm.startBroadcast(msg.sender);
@@ -49,9 +44,11 @@ contract DevnetCoprocessorDeployer is DeployerBase {
 
     function setupOperators() external payable {
         for (uint256 i = 0; i < config.operatorWhitelist.length; i++) {
-            sendEther(msg.sender, config.operatorWhitelist[i], 30000);
-            mintToken(msg.sender, deployment.strategyToken, config.operatorWhitelist[i], 20);
-            registerOperator(el_deployment, config.operatorWhitelist[i]);
+            address operator = config.operatorWhitelist[i];
+            sendEther(msg.sender, operator, 30000);
+            registerOperatorWithEigenLayer(operator);
+            mintToken(msg.sender, deployment.strategyToken, operator, 20);
+            depositIntoStrategy(operator, deployment.strategy, 10);
         }
     }
 }
