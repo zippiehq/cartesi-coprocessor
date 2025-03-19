@@ -82,7 +82,7 @@ contract CoprocessorDeployerBase is Script {
         address stakeRegistry;
         address socketRegistry;
         address pauserRegistry;
-        //address slasher;
+        address slasher;
 
         address strategyToken;
         address strategy;
@@ -113,7 +113,7 @@ contract CoprocessorDeployerBase is Script {
         deployment.blsApkRegistry = UpgradeableProxyLib.setUpEmptyProxy(deployment.proxyAdmin);
         deployment.indexRegistry = UpgradeableProxyLib.setUpEmptyProxy(deployment.proxyAdmin);
         deployment.socketRegistry = UpgradeableProxyLib.setUpEmptyProxy(deployment.proxyAdmin);
-        //deployment.slasher = UpgradeableProxyLib.setUpEmptyProxy(proxyAdmin);
+        deployment.slasher = UpgradeableProxyLib.setUpEmptyProxy(deployment.proxyAdmin);
 
         // 2. Deploy the implementation contracts, using the proxy contracts as input
         
@@ -136,15 +136,13 @@ contract CoprocessorDeployerBase is Script {
             address(new IndexRegistry(IRegistryCoordinator(deployment.registryCoordinator)));
         
         // Deploy InstantSlasher
-        /*
-        address instantSlasherImpl = address(
+        address slasherImpl = address(
             new InstantSlasher(
                 IAllocationManager(el_deployment.allocationManager),
                 ISlashingRegistryCoordinator(deployment.registryCoordinator),
-                deployment.incredibleSquaringTaskManager
+                deployment.coprocessor // for avs demo it's deployment.incredibleSquaringTaskManager, so?..
             )
         );
-        */
        
         // Deploy SlashingRegistryCoordinator 
         address registryCoordinatorImpl = address( 
@@ -224,15 +222,10 @@ contract CoprocessorDeployerBase is Script {
             deployment.coprocessorServiceManager, coprocessorSerivceManagerImpl, coprocessorServiceManagerUpgradeCall
         );
 
-        /*
-        // Initialize and upgrade InstantSlasher
-        bytes memory slasherupgradecall = abi.encodeCall(
-            InstantSlasher.initialize, (address(deployment.incredibleSquaringTaskManager))
-        );
-        UpgradeableProxyLib.upgradeAndCall(deployment.slasher, instantSlasherImpl, slasherupgradecall);
-        */
+        // Upgrade Slasher
+        UpgradeableProxyLib.upgrade(deployment.slasher, slasherImpl);
 
-       vm.stopBroadcast();
+        vm.stopBroadcast();
     }
 
      function verifyAvsDeployment() internal view {
@@ -328,6 +321,7 @@ contract CoprocessorDeployerBase is Script {
         vm.serializeAddress(addresses, "indexRegistry", address(deployment.indexRegistry));
         vm.serializeAddress(addresses, "stakeRegistry", address(deployment.stakeRegistry));
         vm.serializeAddress(addresses, "socketRegistry", address(deployment.socketRegistry));
+        vm.serializeAddress(addresses, "slasher", address(deployment.slasher));
         vm.serializeAddress(addresses, "pauserRegistry", address(deployment.pauserRegistry));
         vm.serializeAddress(addresses, "strategyToken", address(deployment.strategyToken));
         vm.serializeAddress(addresses, "strategy", address(deployment.strategy));
