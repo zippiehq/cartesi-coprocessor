@@ -26,12 +26,6 @@ trap 'cleanup $LINENO "$BASH_COMMAND"' EXIT
 # start an empty anvil chain in the background and dump its state to a json file upon exit
 start_anvil_docker "" $parent_path/env/eigenlayer/anvil/eigenlayer-deployed-anvil-state.json
 
-cd contracts/lib/eigenlayer-middleware/lib/eigenlayer-contracts
-CHAIN_ID=$(cast chain-id)
-
-# deployment overwrites this file, so we save it as backup, because we want that output in our local files, and not in the eigenlayer-contracts submodule files
-mv script/output/devnet/M2_from_scratch_deployment_data.json script/output/devnet/M2_from_scratch_deployment_data.json.bak || true
-# M2_Deploy_From_Scratch.s.sol prepends "script/testing/" to the configFile passed as input (M2_deploy_from_scratch.anvil.config.json)
-forge script script/deploy/local/Deploy_From_Scratch.s.sol --rpc-url http://localhost:8545 --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 --broadcast --sig "run(string memory configFile)" -- local/deploy_from_scratch.anvil.config.json
-mv script/output/devnet/M2_from_scratch_deployment_data.json ../../../../script/output/eigenlayer_deployment_output.json
-mv script/output/devnet/M2_from_scratch_deployment_data.json.bak script/output/devnet/M2_from_scratch_deployment_data.json
+cd ./contracts
+cast rpc anvil_mine 2 --rpc-url $RPC_URL > /dev/null
+forge script script/DevnetEigenlayerDeployer.s.sol --rpc-url $RPC_URL --private-key $PRIVATE_KEY --broadcast -vvv
