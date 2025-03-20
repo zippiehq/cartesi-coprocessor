@@ -2,7 +2,7 @@
   "addresses": {
     "allocationManager": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
     "avsDirectory": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
-    "delegation": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+    "delegationManager": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
     "eigenPodBeacon": "0x9A676e781A523b5d0C0e43731313A708CB607508",
     "eigenPodManager": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
     "pauserRegistry": "0x0B306BF915C4d645ff596e518fAf3F9669b97016",

@@ -390,7 +390,7 @@ library EigenlayerDeploymentLib {
 
         Deployment memory deployment;
         deployment.proxyAdmin = json.readAddress(".addresses.proxyAdmin");
-        deployment.delegationManager = json.readAddress(".addresses.delegation");
+        deployment.delegationManager = json.readAddress(".addresses.delegationManager");
         deployment.avsDirectory = json.readAddress(".addresses.avsDirectory");
         deployment.strategyManager = json.readAddress(".addresses.strategyManager");
         deployment.eigenPodManager = json.readAddress(".addresses.eigenPodManager");
@@ -413,7 +413,7 @@ library EigenlayerDeploymentLib {
         
         string memory addresses = "addresses";
         vm.serializeAddress(addresses, "proxyAdmin", address(deployment.proxyAdmin));
-        vm.serializeAddress(addresses, "delegation", address(deployment.delegationManager));
+        vm.serializeAddress(addresses, "delegationManager", address(deployment.delegationManager));
         vm.serializeAddress(addresses, "avsDirectory", address(deployment.avsDirectory));
         vm.serializeAddress(addresses, "strategyManager", address(deployment.strategyManager));
         vm.serializeAddress(addresses, "eigenPodManager", address(deployment.eigenPodManager));
