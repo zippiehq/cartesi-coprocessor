@@ -325,9 +325,9 @@ contract CoprocessorDeployerBase is Script {
         vm.serializeAddress(addresses, "pauserRegistry", address(deployment.pauserRegistry));
         vm.serializeAddress(addresses, "strategyToken", address(deployment.strategyToken));
         vm.serializeAddress(addresses, "strategy", address(deployment.strategy));
-        vm.serializeAddress(addresses, "L2Coprocessor", address(deployment.L2Coprocessor));
-        vm.serializeAddress(addresses, "L2CoprocessorCaller", address(deployment.L2CoprocessorCaller));
-        vm.serializeAddress(addresses, "L1Sender", address(deployment.L1Sender));
+        vm.serializeAddress(addresses, "l2Coprocessor", address(deployment.L2Coprocessor));
+        vm.serializeAddress(addresses, "l2CoprocessorCaller", address(deployment.L2CoprocessorCaller));
+        vm.serializeAddress(addresses, "l1Sender", address(deployment.L1Sender));
         string memory adressesJson =
             vm.serializeAddress(addresses, "coprocessorToL2", address(deployment.coprocessorToL2));
         
