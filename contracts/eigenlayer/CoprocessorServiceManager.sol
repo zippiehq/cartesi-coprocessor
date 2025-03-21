@@ -122,6 +122,8 @@ contract CoprocessorServiceManager is ServiceManagerBase {
         }
     }
 
+    // !!!
+    /*
     function registerOperatorToAVS(
         address operator,
         ISignatureUtils.SignatureWithSaltAndExpiry memory operatorSignature
@@ -133,4 +135,5 @@ contract CoprocessorServiceManager is ServiceManagerBase {
         // Stake requirement for quorum is checked in StakeRegistry
         _avsDirectory.registerOperatorToAVS(operator, operatorSignature);
     }
+    */
 }

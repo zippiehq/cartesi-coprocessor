@@ -64,6 +64,8 @@ contract CoprocessorDeployerBase is Script {
     using Strings for *;
     using UpgradeableProxyLib for address;
 
+    string internal constant MIDDLEWARE_VERSION = "v1.4.0-testnet-holesky";
+
     struct DeploymentConfig {
         bool operatorWhitelistEnabled;
         address[] operatorWhitelist;
@@ -152,7 +154,8 @@ contract CoprocessorDeployerBase is Script {
                 IIndexRegistry(deployment.indexRegistry),
                 ISocketRegistry(deployment.socketRegistry),
                 IAllocationManager(el_deployment.allocationManager),
-                IPauserRegistry(el_deployment.pauserRegistry)
+                IPauserRegistry(el_deployment.pauserRegistry),
+                MIDDLEWARE_VERSION
             )
         );
 

@@ -20,6 +20,7 @@ import {AllocationManager} from "@eigenlayer/core/AllocationManager.sol";
 import {StrategyManager} from "@eigenlayer/core/StrategyManager.sol";
 import {AVSDirectory} from "@eigenlayer/core/AVSDirectory.sol";
 import {EigenPodManager} from "@eigenlayer/pods/EigenPodManager.sol";
+import {IRewardsCoordinatorTypes} from "@eigenlayer/interfaces/IRewardsCoordinator.sol";
 import {RewardsCoordinator} from "@eigenlayer/core/RewardsCoordinator.sol";
 import {StrategyBase} from "@eigenlayer/strategies/StrategyBase.sol";
 import {EigenPod} from "@eigenlayer/pods/EigenPod.sol";
@@ -27,7 +28,6 @@ import {IETHPOSDeposit} from "@eigenlayer/interfaces/IETHPOSDeposit.sol";
 import {StrategyBaseTVLLimits} from "@eigenlayer/strategies/StrategyBaseTVLLimits.sol";
 import {PauserRegistry} from "@eigenlayer/permissions/PauserRegistry.sol";
 import {IStrategy} from "@eigenlayer/interfaces/IStrategy.sol";
-import {ISignatureUtils} from "@eigenlayer/interfaces/ISignatureUtils.sol";
 import {IDelegationManager} from "@eigenlayer/interfaces/IDelegationManager.sol";
 import {IStrategyManager} from "@eigenlayer/interfaces/IStrategyManager.sol";
 import {IEigenPodManager} from "@eigenlayer/interfaces/IEigenPodManager.sol";
@@ -44,6 +44,7 @@ library EigenlayerDeploymentLib {
     using UpgradeableProxyLib for address;
 
     Vm internal constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
+    string internal constant EIGENLAYER_VERSION = "v1.4.0-testnet-holesky";
 
     struct StrategyManagerConfig {
         uint256 initPausedStatus;
@@ -108,17 +109,18 @@ library EigenlayerDeploymentLib {
         result.delegationManager = UpgradeableProxyLib.setUpEmptyProxy(result.proxyAdmin);
         result.avsDirectory = UpgradeableProxyLib.setUpEmptyProxy(result.proxyAdmin);
         result.strategyManager = UpgradeableProxyLib.setUpEmptyProxy(result.proxyAdmin);
-        result.eigenPodManager = UpgradeableProxyLib.setUpEmptyProxy(result.proxyAdmin);
         result.allocationManager = UpgradeableProxyLib.setUpEmptyProxy(result.proxyAdmin);
+        result.avsDirectory = UpgradeableProxyLib.setUpEmptyProxy(result.proxyAdmin);
         result.rewardsCoordinator = UpgradeableProxyLib.setUpEmptyProxy(result.proxyAdmin);
         result.eigenPodBeacon = UpgradeableProxyLib.setUpEmptyProxy(result.proxyAdmin);
         result.pauserRegistry = address(
             new PauserRegistry(
                 new address[](0), // Empty array for pausers
-                result.proxyAdmin // ProxyAdmin as the unpauser
+                result.proxyAdmin // result.proxyAdmin as the unpauser
             )
         );
         result.strategyFactory = UpgradeableProxyLib.setUpEmptyProxy(result.proxyAdmin);
+        result.eigenPodManager = UpgradeableProxyLib.setUpEmptyProxy(result.proxyAdmin);
         result.permissionController = UpgradeableProxyLib.setUpEmptyProxy(result.proxyAdmin);
 
         // Deploy the implementation contracts, using the proxy contracts as inputs
@@ -130,27 +132,33 @@ library EigenlayerDeploymentLib {
                 IPauserRegistry(result.pauserRegistry),
                 IPermissionController(result.permissionController),
                 // IAVSDirectory(result.avsDirectory),
-                uint32(0) // TODO: check minWithdrawalDelay
+                uint32(0), // TODO: check minWithdrawalDelay
+                EIGENLAYER_VERSION
             )
         );
-        address permissionControllerImpl = address(new PermissionController());
+        address permissionControllerImpl = address(new PermissionController(EIGENLAYER_VERSION));
 
         address avsDirectoryImpl = address(
             new AVSDirectory(
                 IDelegationManager(result.delegationManager),
-                IPauserRegistry(result.pauserRegistry) // _DEALLOCATION_DELAY: 17.5 days in seconds),
+                IPauserRegistry(result.pauserRegistry), // _DEALLOCATION_DELAY: 17.5 days in seconds),
+                EIGENLAYER_VERSION
             )
         );
 
         address strategyManagerImpl = address(
             new StrategyManager(
-                IDelegationManager(result.delegationManager), IPauserRegistry(result.pauserRegistry)
+                IDelegationManager(result.delegationManager),
+                IPauserRegistry(result.pauserRegistry),
+                EIGENLAYER_VERSION
             )
         );
 
         address strategyFactoryImpl = address(
             new StrategyFactory(
-                IStrategyManager(result.strategyManager), IPauserRegistry(result.pauserRegistry)
+                IStrategyManager(result.strategyManager),
+                IPauserRegistry(result.pauserRegistry),
+                EIGENLAYER_VERSION
             )
         );
 
@@ -161,7 +169,8 @@ library EigenlayerDeploymentLib {
                 IPermissionController(result.permissionController),
                 // IAVSDirectory(result.avsDirectory),
                 uint32(0), // _DEALLOCATION_DELAY
-                uint32(0) // _ALLOCATION_CONFIGURATION_DELAY
+                uint32(0), // _ALLOCATION_CONFIGURATION_DELAY
+                EIGENLAYER_VERSION
             )
         );
 
@@ -179,28 +188,32 @@ library EigenlayerDeploymentLib {
                 IETHPOSDeposit(ethPOSDeposit),
                 IBeacon(result.eigenPodBeacon),
                 IDelegationManager(result.delegationManager),
-                IPauserRegistry(result.pauserRegistry)
+                IPauserRegistry(result.pauserRegistry),
+                EIGENLAYER_VERSION
             )
         );
 
         /// TODO: Get actual values
         uint32 CALCULATION_INTERVAL_SECONDS = 1 days;
-        uint32 MAX_REWARDS_DURATION = 1 days;
-        uint32 MAX_RETROACTIVE_LENGTH = 200_000;
+        uint32 MAX_REWARDS_DURATION = uint32(config.rewardsCoordinator.maxRewardsDuration);
+        uint32 MAX_RETROACTIVE_LENGTH = uint32(config.rewardsCoordinator.maxRetroactiveLength);
         uint32 MAX_FUTURE_LENGTH = 1 days;
         uint32 GENESIS_REWARDS_TIMESTAMP = 10 days;
         address rewardsCoordinatorImpl = address(
             new RewardsCoordinator(
-                IDelegationManager(result.delegationManager),
-                IStrategyManager(result.strategyManager),
-                IAllocationManager(result.allocationManager),
-                IPauserRegistry(result.pauserRegistry),
-                IPermissionController(result.permissionController),
-                CALCULATION_INTERVAL_SECONDS,
-                MAX_REWARDS_DURATION,
-                MAX_RETROACTIVE_LENGTH,
-                MAX_FUTURE_LENGTH,
-                GENESIS_REWARDS_TIMESTAMP
+                IRewardsCoordinatorTypes.RewardsCoordinatorConstructorParams({
+                    delegationManager: IDelegationManager(result.delegationManager),
+                    strategyManager: IStrategyManager(result.strategyManager),
+                    allocationManager: IAllocationManager(result.allocationManager),
+                    pauserRegistry: IPauserRegistry(result.pauserRegistry),
+                    permissionController: IPermissionController(result.permissionController),
+                    CALCULATION_INTERVAL_SECONDS: CALCULATION_INTERVAL_SECONDS,
+                    MAX_REWARDS_DURATION: MAX_REWARDS_DURATION,
+                    MAX_RETROACTIVE_LENGTH: MAX_RETROACTIVE_LENGTH,
+                    MAX_FUTURE_LENGTH: MAX_FUTURE_LENGTH,
+                    GENESIS_REWARDS_TIMESTAMP: GENESIS_REWARDS_TIMESTAMP,
+                    version: EIGENLAYER_VERSION
+                })
             )
         );
 
@@ -210,13 +223,15 @@ library EigenlayerDeploymentLib {
             new EigenPod(
                 IETHPOSDeposit(ethPOSDeposit),
                 IEigenPodManager(result.eigenPodManager),
-                GENESIS_TIME
+                GENESIS_TIME,
+                EIGENLAYER_VERSION
             )
         );
-        address eigenPodBeaconImpl = address(new UpgradeableBeacon(eigenPodImpl));
         address baseStrategyImpl = address(
             new StrategyBase(
-                IStrategyManager(result.strategyManager), IPauserRegistry(result.pauserRegistry)
+                IStrategyManager(result.strategyManager),
+                IPauserRegistry(result.pauserRegistry),
+                EIGENLAYER_VERSION
             )
         );
         /// TODO: PauserRegistry isn't upgradeable
@@ -225,7 +240,6 @@ library EigenlayerDeploymentLib {
         result.strategyBeacon = address(new UpgradeableBeacon(baseStrategyImpl));
 
         // Upgrade contracts
-        // / TODO: Get from config
         bytes memory upgradeCall = abi.encodeCall(
             DelegationManager.initialize,
             (
@@ -324,8 +338,6 @@ library EigenlayerDeploymentLib {
         UpgradeableProxyLib.upgradeAndCall(
             result.allocationManager, allocationManagerImpl, upgradeCall
         );
-        console2.log("888");
-        console2.log(result.permissionController);
 
         return result;
     }
