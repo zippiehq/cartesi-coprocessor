@@ -24,10 +24,14 @@ contract DevnetCoprocessorDeployer is CoprocessorDeployerBase {
         
         deployAvs(msg.sender, msg.sender);
         verifyAvsDeployment();
-        
-        deployStrategy(msg.sender);
-        deployL1L2Bridge(msg.sender);
 
+        deployStrategy(); // strategy is required for quorums
+        
+        setupAvsUamPermissions();
+        setupAvsQuorums();
+
+        deployL1L2Bridge();
+        
         this.setupOperators();
 
         writeDeployment("./script/output/devnet_coprocessor_deployment.json");                

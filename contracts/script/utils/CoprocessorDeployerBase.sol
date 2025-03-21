@@ -18,7 +18,9 @@ import {IAllocationManager} from "@eigenlayer/interfaces/IAllocationManager.sol"
 import {IStrategy} from "@eigenlayer/interfaces/IStrategyManager.sol";
 import {IRewardsCoordinator} from "@eigenlayer/interfaces/IRewardsCoordinator.sol";
 import {StrategyFactory} from "@eigenlayer/strategies/StrategyFactory.sol";
+import {IAVSRegistrar} from "@eigenlayer/interfaces/IAVSRegistrar.sol";
 
+import {IServiceManager} from "@eigenlayer-middleware/interfaces/IServiceManager.sol";
 import {BLSApkRegistry} from "@eigenlayer-middleware/BLSApkRegistry.sol";
 import {IndexRegistry} from "@eigenlayer-middleware/IndexRegistry.sol";
 import {InstantSlasher} from "@eigenlayer-middleware/slashers/InstantSlasher.sol";
@@ -98,9 +100,19 @@ contract CoprocessorDeployerBase is Script {
     EigenlayerDeploymentLib.Deployment el_deployment;
     DeploymentConfig config;
 
+    address deployer;
+    address admin;
     Deployment deployment;
 
-    function deployAvs(address deployer, address admin) internal {
+    modifier avsDeployed() {
+        require(deployer != address(0) && admin != address(0),"avs contracts are not deployed");
+        _;
+    }
+
+    function deployAvs(address _deployer, address _admin) internal {
+        deployer = _deployer;
+        admin = _admin;
+        
         vm.startBroadcast(deployer);
         
         // 1. Deploy upgradeable proxy contracts that will point to the implementations
@@ -231,7 +243,7 @@ contract CoprocessorDeployerBase is Script {
         vm.stopBroadcast();
     }
 
-     function verifyAvsDeployment() internal view {
+     function verifyAvsDeployment() avsDeployed internal view {        
         IBLSApkRegistry blsapkregistry =
             IRegistryCoordinator(deployment.registryCoordinator).blsApkRegistry();
         require(address(blsapkregistry) != address(0));
@@ -242,7 +254,69 @@ contract CoprocessorDeployerBase is Script {
         require(address(delegationmanager) != address(0));
     }
 
-    function deployStrategy(address deployer) internal {
+    function setupAvsUamPermissions() avsDeployed internal {
+        vm.startBroadcast(deployer);
+        
+        IServiceManager serviceManager =
+            IServiceManager(deployment.coprocessorServiceManager);
+        serviceManager.setAppointee(
+            deployer, el_deployment.allocationManager, AllocationManager.setAVSRegistrar.selector
+        );
+
+        IAllocationManager allocationManager = IAllocationManager(el_deployment.allocationManager);
+        allocationManager.setAVSRegistrar(
+            deployment.coprocessorServiceManager,
+            IAVSRegistrar(deployment.registryCoordinator)
+        );
+
+        serviceManager.setAppointee(
+            deployment.registryCoordinator,
+            el_deployment.allocationManager,
+            AllocationManager.createOperatorSets.selector
+        );
+
+        serviceManager.setAppointee(
+            deployment.slasher,
+            el_deployment.allocationManager,
+            AllocationManager.slashOperator.selector
+        );
+
+        // This should be in another contract
+        serviceManager.setAppointee(
+            deployer, el_deployment.allocationManager, AllocationManager.updateAVSMetadataURI.selector
+        );
+
+        allocationManager.updateAVSMetadataURI(
+            deployment.coprocessorServiceManager, "metadataURI"
+        );
+
+        vm.stopBroadcast();
+    }
+
+    // TODO: setupAvsQuorums must read parameters of operator sets and strategies from json config
+    function setupAvsQuorums() avsDeployed internal {
+        vm.startBroadcast(deployer);
+        
+        ISlashingRegistryCoordinatorTypes.OperatorSetParam memory _operatorSetParam =
+        ISlashingRegistryCoordinatorTypes.OperatorSetParam({
+            maxOperatorCount: 3,
+            kickBIPsOfOperatorStake: 100,
+            kickBIPsOfTotalStake: 1000
+        });
+        uint96 minimumStake = 0;
+        IStakeRegistryTypes.StrategyParams[] memory _strategyParams =
+            new IStakeRegistryTypes.StrategyParams[](1);
+        IStrategy istrategy = IStrategy(deployment.strategy);
+        _strategyParams[0] =
+            IStakeRegistryTypes.StrategyParams({strategy: istrategy, multiplier: 1});
+        SlashingRegistryCoordinator regCoord =
+            SlashingRegistryCoordinator(deployment.registryCoordinator);
+        regCoord.createTotalDelegatedStakeQuorum(_operatorSetParam, minimumStake, _strategyParams);
+
+        vm.stopBroadcast();
+    }
+
+    function deployStrategy() avsDeployed internal {
         vm.startBroadcast(deployer);
         
         deployment.strategyToken = address(new ERC20Mock());     
@@ -254,7 +328,7 @@ contract CoprocessorDeployerBase is Script {
         vm.stopBroadcast();
     }
 
-    function deployL1L2Bridge(address deployer) internal {
+    function deployL1L2Bridge() avsDeployed internal {
         vm.startBroadcast(deployer);
         
         deployment.L2Coprocessor = address(
