@@ -47,9 +47,9 @@ contract DevnetCoprocessorDeployer is CoprocessorDeployerBase {
             mintToken(msg.sender, deployment.strategyToken, operator, 20);
             depositIntoStrategy(operator, deployment.strategy, 10);
 
-            vm.startBroadcast(admin);
+            vm.startBroadcast(operator);
             uint32[] memory oids = new uint32[](1);
-            oids[0] = 1;
+            oids[0] = 0;
             IAllocationManagerTypes.RegisterParams memory register = IAllocationManagerTypes.RegisterParams({
                 avs: deployment.coprocessorServiceManager,
                 operatorSetIds: oids,
