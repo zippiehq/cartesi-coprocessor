@@ -20,11 +20,15 @@ contract DevnetCoprocessorDeployer is CoprocessorDeployerBase {
     function run() external {
         el_deployment = EigenlayerDeploymentLib.readDeployment("./script/output/devnet_eigenlayer_deployment.json");
 
+        config.registryCoordinatorOwner = msg.sender;
+        config.churnApprover = msg.sender;
+        config.ejector = msg.sender;
+        config.metdataURI = "ipfs://mock-metadata-uri";
         config.operatorWhitelistEnabled = true;
         config.operatorWhitelist = new address[](1);
         config.operatorWhitelist[0] = 0x02C9ca5313A6E826DC05Bbe098150b3215D5F821;
         
-        deployAvs(msg.sender, msg.sender);
+        deployAvs();
         verifyAvsDeployment();
 
         deployStrategy(); // strategy is required for quorums

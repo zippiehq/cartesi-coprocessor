@@ -69,6 +69,11 @@ contract CoprocessorDeployerBase is Script {
     string internal constant MIDDLEWARE_VERSION = "v1.4.0-testnet-holesky";
 
     struct DeploymentConfig {
+        address registryCoordinatorOwner;
+        address churnApprover;
+        address ejector;
+        string metdataURI;
+
         bool operatorWhitelistEnabled;
         address[] operatorWhitelist;
     }
@@ -85,7 +90,6 @@ contract CoprocessorDeployerBase is Script {
         address indexRegistry;
         address stakeRegistry;
         address socketRegistry;
-        address pauserRegistry;
         address slasher;
 
         address strategyToken;
@@ -100,30 +104,18 @@ contract CoprocessorDeployerBase is Script {
     EigenlayerDeploymentLib.Deployment el_deployment;
     DeploymentConfig config;
 
-    address deployer;
-    address admin;
     Deployment deployment;
 
-    modifier avsDeployed() {
-        require(deployer != address(0) && admin != address(0),"avs contracts are not deployed");
-        _;
-    }
-
-    function deployAvs(address _deployer, address _admin) internal {
-        deployer = _deployer;
-        admin = _admin;
-        
-        vm.startBroadcast(deployer);
+    function deployAvs() internal {
+        vm.startBroadcast(config.registryCoordinatorOwner);
         
         // 1. Deploy upgradeable proxy contracts that will point to the implementations
         deployment.proxyAdmin = UpgradeableProxyLib.deployProxyAdmin();
         
         deployment.coprocessor = UpgradeableProxyLib.setUpEmptyProxy(deployment.proxyAdmin);
         deployment.coprocessorServiceManager = UpgradeableProxyLib.setUpEmptyProxy(deployment.proxyAdmin);
-        
         deployment.stakeRegistry = UpgradeableProxyLib.setUpEmptyProxy(deployment.proxyAdmin);
         deployment.registryCoordinator = UpgradeableProxyLib.setUpEmptyProxy(deployment.proxyAdmin);
-        deployment.operatorStateRetriever = address(new OperatorStateRetriever());
         deployment.blsApkRegistry = UpgradeableProxyLib.setUpEmptyProxy(deployment.proxyAdmin);
         deployment.indexRegistry = UpgradeableProxyLib.setUpEmptyProxy(deployment.proxyAdmin);
         deployment.socketRegistry = UpgradeableProxyLib.setUpEmptyProxy(deployment.proxyAdmin);
@@ -171,11 +163,7 @@ contract CoprocessorDeployerBase is Script {
             )
         );
 
-        // Deploy PauserRegistry
-        address[] memory pausers = new address[](2);
-        pausers[0] = admin;
-        pausers[1] = admin;
-        deployment.pauserRegistry = address(new PauserRegistry(pausers, admin));
+        deployment.operatorStateRetriever = address(new OperatorStateRetriever());
 
         // 3. Upgrade the proxy contracts to use the correct implementation contracts and initialize them
         
@@ -191,7 +179,13 @@ contract CoprocessorDeployerBase is Script {
         // Upgrade and initialize SlashingRegistryCoordinator
         bytes memory registryCoordinatorUpgradeCall = abi.encodeCall(
             SlashingRegistryCoordinator.initialize,
-            (admin, admin, admin, 0, deployment.coprocessorServiceManager)
+            (
+                config.registryCoordinatorOwner,
+                config.churnApprover,
+                config.ejector,
+                0,
+                deployment.coprocessorServiceManager
+            )
         );
         UpgradeableProxyLib.upgradeAndCall(
             deployment.registryCoordinator, registryCoordinatorImpl, registryCoordinatorUpgradeCall
@@ -217,7 +211,7 @@ contract CoprocessorDeployerBase is Script {
         // Upgrade and initialize Coprocessor
         bytes memory coprocessorUpgradeCall = abi.encodeCall(
             Coprocessor.initialize,
-            (admin)
+            (config.registryCoordinatorOwner)
         );
         UpgradeableProxyLib.upgradeAndCall(
             deployment.coprocessor, coprocessorImpl, coprocessorUpgradeCall
@@ -230,7 +224,7 @@ contract CoprocessorDeployerBase is Script {
                 ICoprocessor(coprocessorImpl), 
                 config.operatorWhitelistEnabled, 
                 config.operatorWhitelist, 
-                admin
+                config.registryCoordinatorOwner
             )
         );
         UpgradeableProxyLib.upgradeAndCall(
@@ -243,7 +237,7 @@ contract CoprocessorDeployerBase is Script {
         vm.stopBroadcast();
     }
 
-     function verifyAvsDeployment() avsDeployed internal view {        
+     function verifyAvsDeployment() internal view {        
         IBLSApkRegistry blsapkregistry =
             IRegistryCoordinator(deployment.registryCoordinator).blsApkRegistry();
         require(address(blsapkregistry) != address(0));
@@ -254,25 +248,52 @@ contract CoprocessorDeployerBase is Script {
         require(address(delegationmanager) != address(0));
     }
 
-    function setupAvsUamPermissions() avsDeployed internal {
-        vm.startBroadcast(deployer);
+    function setupAvsUamPermissions() internal {
+        vm.startBroadcast(config.registryCoordinatorOwner);
         
         IServiceManager serviceManager =
             IServiceManager(deployment.coprocessorServiceManager);
+        
+        // 1. set AVS registrar
         serviceManager.setAppointee(
-            deployer, el_deployment.allocationManager, AllocationManager.setAVSRegistrar.selector
+            config.registryCoordinatorOwner,
+            el_deployment.allocationManager,
+            AllocationManager.setAVSRegistrar.selector
         );
 
-        IAllocationManager allocationManager = IAllocationManager(el_deployment.allocationManager);
-        allocationManager.setAVSRegistrar(
-            deployment.coprocessorServiceManager,
-            IAVSRegistrar(deployment.registryCoordinator)
+        // 2. set AVS metadata
+        serviceManager.setAppointee(
+            config.registryCoordinatorOwner, 
+            el_deployment.allocationManager,
+            AllocationManager.updateAVSMetadataURI.selector
         );
 
+        // 3. create operator sets
         serviceManager.setAppointee(
             deployment.registryCoordinator,
             el_deployment.allocationManager,
             AllocationManager.createOperatorSets.selector
+        );
+
+        // 4. deregister operator from operator sets
+        serviceManager.setAppointee(
+            deployment.registryCoordinator,
+            el_deployment.allocationManager,
+            AllocationManager.deregisterFromOperatorSets.selector
+        );
+
+        // 5. add strategies to operator sets
+        serviceManager.setAppointee(
+            deployment.registryCoordinator,
+            deployment.stakeRegistry,
+            AllocationManager.addStrategiesToOperatorSet.selector
+        );
+
+        // 6. remove strategies from operator sets
+        serviceManager.setAppointee(
+            deployment.registryCoordinator,
+            deployment.stakeRegistry,
+            AllocationManager.removeStrategiesFromOperatorSet.selector
         );
 
         serviceManager.setAppointee(
@@ -281,21 +302,24 @@ contract CoprocessorDeployerBase is Script {
             AllocationManager.slashOperator.selector
         );
 
-        // This should be in another contract
-        serviceManager.setAppointee(
-            deployer, el_deployment.allocationManager, AllocationManager.updateAVSMetadataURI.selector
+        // Set AVS Registrar to RegistryCoordinator
+        IAllocationManager allocationManager = IAllocationManager(el_deployment.allocationManager);
+        allocationManager.setAVSRegistrar(
+            deployment.coprocessorServiceManager,
+            IAVSRegistrar(deployment.registryCoordinator)
         );
 
+        // Set AVS metadata URI
         allocationManager.updateAVSMetadataURI(
-            deployment.coprocessorServiceManager, "metadataURI"
+            deployment.coprocessorServiceManager, config.metdataURI
         );
 
         vm.stopBroadcast();
     }
 
     // TODO: setupAvsQuorums must read parameters of operator sets and strategies from json config
-    function setupAvsQuorums() avsDeployed internal {
-        vm.startBroadcast(deployer);
+    function setupAvsQuorums() internal {
+        vm.startBroadcast(config.registryCoordinatorOwner);
         
         ISlashingRegistryCoordinatorTypes.OperatorSetParam memory _operatorSetParam =
         ISlashingRegistryCoordinatorTypes.OperatorSetParam({
@@ -316,8 +340,8 @@ contract CoprocessorDeployerBase is Script {
         vm.stopBroadcast();
     }
 
-    function deployStrategy() avsDeployed internal {
-        vm.startBroadcast(deployer);
+    function deployStrategy() internal {
+        vm.startBroadcast(config.registryCoordinatorOwner);
         
         deployment.strategyToken = address(new ERC20Mock());     
         deployment.strategy = address(
@@ -328,8 +352,8 @@ contract CoprocessorDeployerBase is Script {
         vm.stopBroadcast();
     }
 
-    function deployL1L2Bridge() avsDeployed internal {
-        vm.startBroadcast(deployer);
+    function deployL1L2Bridge() internal {
+        vm.startBroadcast(config.registryCoordinatorOwner);
         
         deployment.L2Coprocessor = address(
             new Mock_L2Coprocessor(address(0))
@@ -399,7 +423,6 @@ contract CoprocessorDeployerBase is Script {
         vm.serializeAddress(addresses, "stakeRegistry", address(deployment.stakeRegistry));
         vm.serializeAddress(addresses, "socketRegistry", address(deployment.socketRegistry));
         vm.serializeAddress(addresses, "slasher", address(deployment.slasher));
-        vm.serializeAddress(addresses, "pauserRegistry", address(deployment.pauserRegistry));
         vm.serializeAddress(addresses, "strategyToken", address(deployment.strategyToken));
         vm.serializeAddress(addresses, "strategy", address(deployment.strategy));
         vm.serializeAddress(addresses, "l2Coprocessor", address(deployment.L2Coprocessor));
