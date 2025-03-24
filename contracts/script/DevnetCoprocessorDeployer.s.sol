@@ -9,6 +9,8 @@ import "forge-std/StdCheats.sol";
 
 import "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 
+import "@eigenlayer/interfaces/IAllocationManager.sol";
+
 import {EigenlayerDeploymentLib} from "./utils/EigenlayerDeploymentLib.sol";
 import {CoprocessorDeployerBase} from "./utils/CoprocessorDeployerBase.sol";
 
@@ -44,6 +46,20 @@ contract DevnetCoprocessorDeployer is CoprocessorDeployerBase {
             registerOperatorWithEigenLayer(operator);
             mintToken(msg.sender, deployment.strategyToken, operator, 20);
             depositIntoStrategy(operator, deployment.strategy, 10);
+
+            vm.startBroadcast(admin);
+            uint32[] memory oids = new uint32[](1);
+            oids[0] = 1;
+            IAllocationManagerTypes.RegisterParams memory register = IAllocationManagerTypes.RegisterParams({
+                avs: deployment.coprocessorServiceManager,
+                operatorSetIds: oids,
+                data: ""
+            });
+            IAllocationManager(el_deployment.allocationManager).registerForOperatorSets(
+                0x02C9ca5313A6E826DC05Bbe098150b3215D5F821,
+                register
+            );
+            vm.stopBroadcast();
         }
     }
 }
