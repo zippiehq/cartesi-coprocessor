@@ -144,9 +144,13 @@ contract CoprocessorDeployerBase is Script {
             address(new BLSApkRegistry(IRegistryCoordinator(deployment.registryCoordinator)));
         
         // Deploy IndexRegistry
-        address indexRegistryimpl =
+        address indexRegistryImpl =
             address(new IndexRegistry(IRegistryCoordinator(deployment.registryCoordinator)));
         
+        // Deploy SocketRegistry
+        address socketRegistryImpl =
+            address(new SocketRegistry(IRegistryCoordinator(deployment.registryCoordinator)));
+
         // Deploy InstantSlasher
         address slasherImpl = address(
             new InstantSlasher(
@@ -180,7 +184,10 @@ contract CoprocessorDeployerBase is Script {
         UpgradeableProxyLib.upgrade(deployment.blsApkRegistry, blsApkRegistryImpl);
         
         // Upgrade IndexRegistry
-        UpgradeableProxyLib.upgrade(deployment.indexRegistry, indexRegistryimpl);
+        UpgradeableProxyLib.upgrade(deployment.indexRegistry, indexRegistryImpl);
+
+        // Upgrade SocketRegistry
+        UpgradeableProxyLib.upgrade(deployment.socketRegistry, socketRegistryImpl);
         
         // Upgrade and initialize SlashingRegistryCoordinator
         bytes memory registryCoordinatorUpgradeCall = abi.encodeCall(
