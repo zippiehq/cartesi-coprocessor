@@ -9,7 +9,11 @@ import "forge-std/StdCheats.sol";
 
 import "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 
+// !!!
 import "@eigenlayer/interfaces/IAllocationManager.sol";
+import {SlashingRegistryCoordinator} from
+    "@eigenlayer-middleware/SlashingRegistryCoordinator.sol";
+import {OperatorWalletLib, Operator} from "@eigenlayer-middleware-test/utils/OperatorWalletLib.sol";
 
 import {EigenlayerDeploymentLib} from "./utils/EigenlayerDeploymentLib.sol";
 import {CoprocessorDeployerBase} from "./utils/CoprocessorDeployerBase.sol";
@@ -26,7 +30,8 @@ contract DevnetCoprocessorDeployer is CoprocessorDeployerBase {
         config.metdataURI = "ipfs://mock-metadata-uri";
         config.operatorWhitelistEnabled = true;
         config.operatorWhitelist = new address[](1);
-        config.operatorWhitelist[0] = 0x02C9ca5313A6E826DC05Bbe098150b3215D5F821;
+        // config.operatorWhitelist[0] = 0x02C9ca5313A6E826DC05Bbe098150b3215D5F821;
+        config.operatorWhitelist[0] = 0xbc38a31ac80BaFeD58945ca9aF62500E0f2FeF60;
         
         deployAvs();
         verifyAvsDeployment();
@@ -51,6 +56,7 @@ contract DevnetCoprocessorDeployer is CoprocessorDeployerBase {
             mintToken(msg.sender, deployment.strategyToken, operator, 20);
             depositIntoStrategy(operator, deployment.strategy, 10);
 
+            /*
             vm.startBroadcast(operator);
             uint32[] memory oids = new uint32[](1);
             oids[0] = 0;
@@ -64,6 +70,20 @@ contract DevnetCoprocessorDeployer is CoprocessorDeployerBase {
                 register
             );
             vm.stopBroadcast();
+            */
+
+            /*
+            vm.startPrank(el_deployment.allocationManager);
+            uint32[] memory oids = new uint32[](1);
+            oids[0] = 0;
+            SlashingRegistryCoordinator(deployment.registryCoordinator)
+                .registerOperator(operator, deployment.coprocessorServiceManager, oids, "");
+            vm.stopPrank();
+            */
+
+           TestOperator memory o = createTestOperator("operator");
+           console.log(o.operator.key.addr);
+           registerOperatorWithAVS(o);
         }
     }
 }

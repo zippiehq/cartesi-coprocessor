@@ -14,6 +14,7 @@ remappings = [
     "@eigenlayer/=lib/eigenlayer-middleware/lib/eigenlayer-contracts/src/contracts",
     "@eigenlayer-test/=lib/eigenlayer-middleware/lib/eigenlayer-contracts/src/test",
     "@eigenlayer-middleware/=lib/eigenlayer-middleware/src",
+    "@eigenlayer-middleware-test/=lib/eigenlayer-middleware/test",
 
     # We don't put "/contracts" in the path here, because eigenlayer puts "/contracts" in imports directly...
     "@openzeppelin/=lib/eigenlayer-middleware/lib/eigenlayer-contracts/lib/openzeppelin-contracts-v4.9.0",
