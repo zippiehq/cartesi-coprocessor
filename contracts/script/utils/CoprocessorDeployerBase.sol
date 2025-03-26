@@ -206,7 +206,7 @@ contract CoprocessorDeployerBase is Script {
 
          // Deploy Coprocessor
         address coprocessorImpl = address(
-            new Coprocessor(ISlashingRegistryCoordinator(registryCoordinatorImpl))
+            new Coprocessor(ISlashingRegistryCoordinator(deployment.registryCoordinator))
         );
 
         // Deploy CoprocessorServiceManager
@@ -216,8 +216,8 @@ contract CoprocessorDeployerBase is Script {
                 IRewardsCoordinator(el_deployment.rewardsCoordinator),
                 IPermissionController(el_deployment.permissionController),
                 IAllocationManager(el_deployment.allocationManager),
-                IStakeRegistry(stakeRegistryImpl),
-                ISlashingRegistryCoordinator(registryCoordinatorImpl)
+                IStakeRegistry(deployment.stakeRegistry),
+                ISlashingRegistryCoordinator(deployment.registryCoordinator)
             )
         );
 
@@ -319,7 +319,8 @@ contract CoprocessorDeployerBase is Script {
         IAllocationManager allocationManager = IAllocationManager(el_deployment.allocationManager);
         allocationManager.setAVSRegistrar(
             deployment.coprocessorServiceManager,
-            IAVSRegistrar(deployment.registryCoordinator)
+            //IAVSRegistrar(deployment.registryCoordinator)
+            IAVSRegistrar(deployment.coprocessorServiceManager)
         );
 
         // Set AVS metadata URI

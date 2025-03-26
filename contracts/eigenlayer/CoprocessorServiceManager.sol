@@ -1,14 +1,19 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.27;
 
+import "@eigenlayer/interfaces/IAVSRegistrar.sol";
 import "@eigenlayer/libraries/BytesLib.sol";
+
 import "@eigenlayer-middleware/ServiceManagerBase.sol";
 import "@eigenlayer-middleware/interfaces/IRegistryCoordinator.sol";
 
 import "../src/ICoprocessor.sol";
 import "../src/Errors.sol";
 
-contract CoprocessorServiceManager is ServiceManagerBase {
+// !!!
+import "forge-std/Script.sol";
+
+contract CoprocessorServiceManager is ServiceManagerBase, IAVSRegistrar {
     using BytesLib for bytes;
 
     event OperatorWhitelistEnabled();
@@ -122,8 +127,6 @@ contract CoprocessorServiceManager is ServiceManagerBase {
         }
     }
 
-    // !!!
-    /*
     function registerOperatorToAVS(
         address operator,
         ISignatureUtils.SignatureWithSaltAndExpiry memory operatorSignature
@@ -135,5 +138,30 @@ contract CoprocessorServiceManager is ServiceManagerBase {
         // Stake requirement for quorum is checked in StakeRegistry
         _avsDirectory.registerOperatorToAVS(operator, operatorSignature);
     }
-    */
+
+    // IAVSRegistrar implementation
+    function registerOperator(
+        address operator,
+        address avs,
+        uint32[] calldata operatorSetIds,
+        bytes calldata data
+    ) external {
+        if (operatorWhitelistEnabled && !operatorWhitelist[operator]) {
+            revert OperatorNotInWhitelist();
+        }
+        _registryCoordinator.registerOperator(operator, avs, operatorSetIds, data);
+    }
+
+    function deregisterOperator(address operator, address avs, uint32[] calldata operatorSetIds) external {
+        if (operatorWhitelistEnabled && !operatorWhitelist[operator]) {
+            revert OperatorNotInWhitelist();
+        }
+        _registryCoordinator.deregisterOperator(operator, avs, operatorSetIds);
+    }
+
+    function supportsAVS(
+        address avs
+    ) external view returns (bool) {
+        return _registryCoordinator.supportsAVS(avs);
+    }
 }

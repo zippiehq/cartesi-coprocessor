@@ -84,6 +84,7 @@ contract DevnetCoprocessorDeployer is CoprocessorDeployerBase {
            TestOperator memory o = createTestOperator("operator");
            console.log(o.operator.key.addr);
            registerOperatorWithAVS(o);
+           //registerOperatorWithAVS(o);
         }
     }
 }
