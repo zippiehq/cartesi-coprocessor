@@ -61,12 +61,6 @@ import {CoprocessorToL2} from "../../src/CoprocessorToL2.sol";
 
 import "./EigenlayerDeploymentLib.sol";
 
-// !!!
-import {Operator, OperatorWalletLib, SigningKeyOperationsLib} from "@eigenlayer-middleware-test/utils/OperatorWalletLib.sol";
-import {IBLSApkRegistryTypes} from "@eigenlayer-middleware/interfaces/IBLSApkRegistry.sol";
-import {BN254} from "@eigenlayer-middleware/libraries/BN254.sol";
-import "@eigenlayer/interfaces/IAllocationManager.sol";
-
 contract CoprocessorDeployerBase is Script {
     using stdJson for *;
     using Strings for *;
@@ -315,12 +309,11 @@ contract CoprocessorDeployerBase is Script {
             AllocationManager.slashOperator.selector
         );
 
-        // Set AVS Registrar to RegistryCoordinator
+        // Set AVS Registrar to RegistryCstartBroadcastoordinator
         IAllocationManager allocationManager = IAllocationManager(el_deployment.allocationManager);
         allocationManager.setAVSRegistrar(
             deployment.coprocessorServiceManager,
-            //IAVSRegistrar(deployment.registryCoordinator)
-            IAVSRegistrar(deployment.coprocessorServiceManager)
+            IAVSRegistrar(deployment.registryCoordinator)
         );
 
         // Set AVS metadata URI
@@ -387,41 +380,6 @@ contract CoprocessorDeployerBase is Script {
 
         vm.stopBroadcast();
     }
-    
-    function sendEther(address sender, address to, uint256 value) public payable {
-        vm.startPrank(sender);
-        payable(to).transfer(value);
-        vm.stopPrank();
-    }
-
-    function mintToken(address minter, address erc20, address to, uint256 amount) internal {
-        vm.startPrank(minter);
-        ERC20Mock(erc20).mint(to, amount);
-        vm.stopPrank();
-    }
-
-    function registerOperatorWithEigenLayer(address operator) internal {
-        vm.startPrank(operator);
-        IDelegationManager(el_deployment.delegationManager).registerAsOperator(
-            0x0000000000000000000000000000000000000000,
-            0,
-            "https://raw.githubusercontent.com/tantatnhan/chainbase/refs/heads/main/metadata.json"
-        ); 
-        vm.stopPrank();
-    }
-
-    function depositIntoStrategy(
-        address operator,
-        address startegy,
-        uint256 amount
-    ) internal {
-        vm.startPrank(operator);
-        IERC20 erc20 = IStrategy(startegy).underlyingToken();
-        erc20.approve(el_deployment.strategyManager, amount);
-        IStrategyManager(el_deployment.strategyManager)
-            .depositIntoStrategy(IStrategy(startegy), erc20, amount);
-        vm.stopPrank();
-    }
 
     function writeDeployment(string memory filePath) internal {
          string memory parentObject = "parent object";
@@ -456,45 +414,5 @@ contract CoprocessorDeployerBase is Script {
             vm.broadcast(msg.sender);
             payable(msg.sender).transfer(1 wei);
         }
-    }
-
-    struct TestOperator {
-        Operator operator;
-        IBLSApkRegistryTypes.PubkeyRegistrationParams pubKeyParams;
-    }
-
-    function createTestOperator(string memory name) internal returns (TestOperator memory) {
-        Operator memory operator = OperatorWalletLib.createOperator(name);
-        
-        bytes32 messageHash =
-            SlashingRegistryCoordinator(deployment.registryCoordinator)
-            .calculatePubkeyRegistrationMessageHash(operator.key.addr);
-        BN254.G1Point memory signature =
-            SigningKeyOperationsLib.sign(operator.signingKey, messageHash);
-        IBLSApkRegistryTypes.PubkeyRegistrationParams memory pubKeyParams = IBLSApkRegistryTypes.PubkeyRegistrationParams({
-            pubkeyRegistrationSignature: signature,
-            pubkeyG1: operator.signingKey.publicKeyG1,
-            pubkeyG2: operator.signingKey.publicKeyG2
-        });
-
-        return TestOperator(operator, pubKeyParams);
-    }
-
-    function registerOperatorWithAVS(TestOperator memory operator) internal {
-        vm.startPrank(operator.operator.key.addr);
-        uint32[] memory oids = new uint32[](1);
-        oids[0] = 0;
-        IAllocationManagerTypes.RegisterParams memory params = IAllocationManagerTypes.RegisterParams({
-            avs: deployment.coprocessorServiceManager,
-            operatorSetIds: oids,
-            data: abi.encode(
-                ISlashingRegistryCoordinatorTypes.RegistrationType.NORMAL, "socket", operator.pubKeyParams
-            )
-        });
-        IAllocationManager(el_deployment.allocationManager).registerForOperatorSets(
-            operator.operator.key.addr,
-            params
-        );
-        vm.stopPrank();
     }
 }
