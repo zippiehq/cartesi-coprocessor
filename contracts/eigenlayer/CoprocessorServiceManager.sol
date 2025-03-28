@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.27;
 
-import "@eigenlayer/interfaces/IAVSRegistrar.sol";
 import "@eigenlayer/libraries/BytesLib.sol";
+//import {IAVSRegistrar} from "@eigenlayer/interfaces/IAVSRegistrar.sol";
 
 import "@eigenlayer-middleware/ServiceManagerBase.sol";
 import "@eigenlayer-middleware/interfaces/IRegistryCoordinator.sol";
@@ -10,10 +10,7 @@ import "@eigenlayer-middleware/interfaces/IRegistryCoordinator.sol";
 import "../src/ICoprocessor.sol";
 import "../src/Errors.sol";
 
-// !!!
-import "forge-std/Script.sol";
-
-contract CoprocessorServiceManager is ServiceManagerBase, IAVSRegistrar {
+contract CoprocessorServiceManager is ServiceManagerBase { // IAVSRegistrar {
     using BytesLib for bytes;
 
     event OperatorWhitelistEnabled();
@@ -127,6 +124,8 @@ contract CoprocessorServiceManager is ServiceManagerBase, IAVSRegistrar {
         }
     }
 
+    // !!!
+    /*
     function registerOperatorToAVS(
         address operator,
         ISignatureUtils.SignatureWithSaltAndExpiry memory operatorSignature
@@ -164,4 +163,5 @@ contract CoprocessorServiceManager is ServiceManagerBase, IAVSRegistrar {
     ) external view returns (bool) {
         return _registryCoordinator.supportsAVS(avs);
     }
+    */
 }
