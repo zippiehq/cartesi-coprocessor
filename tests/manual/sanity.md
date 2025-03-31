@@ -43,11 +43,6 @@ cd <project_name>
 cartesi-coprocessor publish --network <devnet, mainnet or testnet>
 ```
 
-### Check Publication Status
-```bash
-cartesi-coprocessor publish-status --network <devnet, mainnet or testnet>
-```
-
 ### View Address Book
 ```bash
 cartesi-coprocessor address-book
