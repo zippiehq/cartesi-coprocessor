@@ -55,7 +55,7 @@ services:
       - coprocessor-network
 
   setup-operator:
-    image: cartesi-coprocessor-operator
+    image: ghcr.io/zippiehq/cartesi-coprocessor-operator:latest
     container_name: cartesi-coprocessor-setup-operator
     depends_on:
       anvil:
