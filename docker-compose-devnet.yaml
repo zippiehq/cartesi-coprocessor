@@ -69,7 +69,7 @@ services:
       --avs-deployment-file-path contracts/script/output/devnet_coprocessor_deployment.json
       --operator-private-key 0xc276a0e2815b89e9a3d8b64cb5d745d5b4f6b84531306c97aad82156000a7dd7
       --operator-socket http://operator:3033
-      --el_node_url http://anvil:8545"
+      --el-node-url http://anvil:8545"
     networks:
       - coprocessor-network
 
