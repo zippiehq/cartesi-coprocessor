@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.27;
 
 contract Mock_L1_Sender {
     IMock_L2Coprocessor public l2Coprocessor;

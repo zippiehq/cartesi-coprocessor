@@ -1,13 +1,16 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.27;
 
-import "@eigenlayer/contracts/libraries/BytesLib.sol";
-import "@eigenlayer-middleware/src/ServiceManagerBase.sol";
+import "@eigenlayer/libraries/BytesLib.sol";
+//import {IAVSRegistrar} from "@eigenlayer/interfaces/IAVSRegistrar.sol";
+
+import "@eigenlayer-middleware/ServiceManagerBase.sol";
+import "@eigenlayer-middleware/interfaces/IRegistryCoordinator.sol";
 
 import "../src/ICoprocessor.sol";
 import "../src/Errors.sol";
 
-contract CoprocessorServiceManager is ServiceManagerBase {
+contract CoprocessorServiceManager is ServiceManagerBase { // IAVSRegistrar {
     using BytesLib for bytes;
 
     event OperatorWhitelistEnabled();
@@ -30,13 +33,19 @@ contract CoprocessorServiceManager is ServiceManagerBase {
 
     constructor(
         IAVSDirectory _avsDirectory,
-        IRegistryCoordinator _registryCoordinator,
-        IStakeRegistry _stakeRegistry
+        IRewardsCoordinator _rewardsCoordinator,
+        IPermissionController _permissionController,
+        IAllocationManager _allocationManager,
+        IStakeRegistry _stakeRegistry,
+        ISlashingRegistryCoordinator _registryCoordinator
     )
         ServiceManagerBase(
             _avsDirectory,
+            _rewardsCoordinator,
             _registryCoordinator,
-            _stakeRegistry
+            _stakeRegistry,
+            _permissionController,
+            _allocationManager
         )
     {
        _disableInitializers();
@@ -46,9 +55,9 @@ contract CoprocessorServiceManager is ServiceManagerBase {
         ICoprocessor _coprocessor,
         bool _operatorWhitelistEnabled,
         address[] calldata _operatorWhitelist,
-	address initialOwner
+	    address initialOwner
     ) public initializer() {
-	__ServiceManagerBase_init(initialOwner);
+	__ServiceManagerBase_init(initialOwner, initialOwner);
         coprocessor = _coprocessor;
 
         operatorWhitelister = _msgSender();
@@ -115,6 +124,8 @@ contract CoprocessorServiceManager is ServiceManagerBase {
         }
     }
 
+    // !!!
+    /*
     function registerOperatorToAVS(
         address operator,
         ISignatureUtils.SignatureWithSaltAndExpiry memory operatorSignature
@@ -126,4 +137,31 @@ contract CoprocessorServiceManager is ServiceManagerBase {
         // Stake requirement for quorum is checked in StakeRegistry
         _avsDirectory.registerOperatorToAVS(operator, operatorSignature);
     }
+
+    // IAVSRegistrar implementation
+    function registerOperator(
+        address operator,
+        address avs,
+        uint32[] calldata operatorSetIds,
+        bytes calldata data
+    ) external {
+        if (operatorWhitelistEnabled && !operatorWhitelist[operator]) {
+            revert OperatorNotInWhitelist();
+        }
+        _registryCoordinator.registerOperator(operator, avs, operatorSetIds, data);
+    }
+
+    function deregisterOperator(address operator, address avs, uint32[] calldata operatorSetIds) external {
+        if (operatorWhitelistEnabled && !operatorWhitelist[operator]) {
+            revert OperatorNotInWhitelist();
+        }
+        _registryCoordinator.deregisterOperator(operator, avs, operatorSetIds);
+    }
+
+    function supportsAVS(
+        address avs
+    ) external view returns (bool) {
+        return _registryCoordinator.supportsAVS(avs);
+    }
+    */
 }

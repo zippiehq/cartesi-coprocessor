@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.27;
 
 import {console} from "forge-std/console.sol";
+
 import "./Mock_L2Coprocessor.sol";
 import "./ICoprocessorCallback.sol";
 

@@ -1,13 +1,16 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.27;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+
+import {ISlashingRegistryCoordinator} from "@eigenlayer-middleware/interfaces/ISlashingRegistryCoordinator.sol";
+
 import "./ICoprocessorL2Sender.sol";
 import "./Coprocessor.sol";
 
 contract CoprocessorToL2 is Coprocessor {
 
-    constructor(IRegistryCoordinator _registryCoordinator)
+    constructor(ISlashingRegistryCoordinator _registryCoordinator)
     Coprocessor(_registryCoordinator) {}
 
     function solverCallbackNoOutputs(
