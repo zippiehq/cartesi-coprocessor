@@ -44,6 +44,7 @@ contract DevnetCoprocessorDeployer is CoprocessorDeployerBase {
         el_deployment = EigenlayerDeploymentLib.readDeployment("./script/output/devnet_eigenlayer_deployment.json");
 
         // Prepare deployment config
+        // Use deployer account for all roles
         config.registryCoordinatorOwner = msg.sender;
         config.churnApprover = msg.sender;
         config.ejector = msg.sender;
@@ -51,8 +52,6 @@ contract DevnetCoprocessorDeployer is CoprocessorDeployerBase {
         config.operatorWhitelistEnabled = true;
         config.operatorWhitelist = new address[](1);
         config.operatorWhitelist[0] = vm.addr(operatorKeys[0]);
-        //config.operatorWhitelist[0] = vm.addr(0x02C9ca5313A6E826DC05Bbe098150b3215D5F821);
-        //config.operatorWhitelist[0] = 0xbc38a31ac80BaFeD58945ca9aF62500E0f2FeF60;
         
         deployAvs();
         verifyAvsDeployment();

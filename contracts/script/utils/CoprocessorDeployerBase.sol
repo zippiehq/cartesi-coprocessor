@@ -107,7 +107,7 @@ contract CoprocessorDeployerBase is Script {
     Deployment deployment;
 
     function deployAvs() internal {
-        vm.startBroadcast(config.registryCoordinatorOwner);
+        vm.startBroadcast();
         
         // 1. Deploy upgradeable proxy contracts that will point to the implementations
         deployment.proxyAdmin = UpgradeableProxyLib.deployProxyAdmin();
@@ -256,7 +256,7 @@ contract CoprocessorDeployerBase is Script {
     }
 
     function setupAvsUamPermissions() internal {
-        vm.startBroadcast(config.registryCoordinatorOwner);
+        vm.startBroadcast();
         
         IServiceManager serviceManager =
             IServiceManager(deployment.coprocessorServiceManager);
@@ -326,7 +326,7 @@ contract CoprocessorDeployerBase is Script {
 
     // TODO: setupAvsQuorums must read parameters of operator sets and strategies from json config
     function setupAvsQuorums() internal {
-        vm.startBroadcast(config.registryCoordinatorOwner);
+        vm.startBroadcast();
         
         ISlashingRegistryCoordinatorTypes.OperatorSetParam memory _operatorSetParam =
         ISlashingRegistryCoordinatorTypes.OperatorSetParam({
@@ -348,7 +348,7 @@ contract CoprocessorDeployerBase is Script {
     }
 
     function deployStrategy() internal {
-        vm.startBroadcast(config.registryCoordinatorOwner);
+        vm.startBroadcast();
         
         deployment.strategyToken = address(new ERC20Mock());     
         deployment.strategy = address(
@@ -360,7 +360,7 @@ contract CoprocessorDeployerBase is Script {
     }
 
     function deployL1L2Bridge() internal {
-        vm.startBroadcast(config.registryCoordinatorOwner);
+        vm.startBroadcast();
         
         deployment.L2Coprocessor = address(
             new Mock_L2Coprocessor(address(0))
