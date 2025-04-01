@@ -8,9 +8,7 @@ RUN curl -L https://foundry.paradigm.xyz | bash
 RUN bash -c 'source /root/.profile && foundryup'
 RUN cp -r /root/.foundry/bin/* /usr/local/bin/
 RUN adduser --uid 1000 foundry
-RUN curl -sSfL https://raw.githubusercontent.com/layr-labs/eigenlayer-cli/master/scripts/install.sh | sh -s -- v0.11.0
-RUN mv /root/bin/eigenlayer /usr/local/bin/eigenlayer-orig
-RUN curl -sSfL https://raw.githubusercontent.com/layr-labs/eigenlayer-cli/master/scripts/install.sh | sh -s -- v0.12.0-beta
-RUN mv /root/bin/eigenlayer /usr/local/bin/eigenlayer-holesky
+COPY ./env/eigenlayer/anvil/avs-and-eigenlayer-deployed-anvil-state.json /root/.anvil/state.json
+COPY ./env/eigenlayer/anvil/run-anvil-devnet.sh /run-anvil-devnet.sh
 
 ENTRYPOINT ["/bin/sh", "-c"]

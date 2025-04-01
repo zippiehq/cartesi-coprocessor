@@ -14,18 +14,13 @@ services:
     container_name: anvil
     ports:
       - 127.0.0.1:8545:8545
-    volumes:
-      - ./env/eigenlayer/anvil/avs-and-eigenlayer-deployed-anvil-state.json:/root/.anvil/state.json
-      - ./:/cartesi-lambada-coprocessor/
-
-    command: /cartesi-lambada-coprocessor/env/eigenlayer/anvil/run-anvil-devnet.sh
+    command: /run-anvil-devnet.sh
 
     healthcheck:
-
-      test: bash -c "[ -f /cartesi-lambada-coprocessor/env/eigenlayer/anvil/devnet-operators-ready.flag ]"
+      test: bash -c "[ -f /devnet-operators-ready.flag ]"
       interval: 3s
       retries: 300
-      start_period: 15s
+      start_period: 5s
 
     networks:
       - coprocessor-network
