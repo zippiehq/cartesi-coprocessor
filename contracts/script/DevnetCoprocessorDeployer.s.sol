@@ -19,23 +19,20 @@ import {ISlashingRegistryCoordinatorTypes} from "@eigenlayer-middleware/interfac
 import {IBLSApkRegistryTypes} from "@eigenlayer-middleware/interfaces/IBLSApkRegistry.sol";
 import {BN254} from "@eigenlayer-middleware/libraries/BN254.sol";
 import {Operator, OperatorWalletLib, SigningKeyOperationsLib} from "@eigenlayer-middleware-test/utils/OperatorWalletLib.sol";
-
+import {IStakeRegistryTypes} from "@eigenlayer-middleware/interfaces/IStakeRegistry.sol";
+import {OperatorStateRetriever} from "@eigenlayer-middleware/OperatorStateRetriever.sol";
 
 import {EigenlayerDeploymentLib} from "./utils/EigenlayerDeploymentLib.sol";
 import {CoprocessorDeployerBase} from "./utils/CoprocessorDeployerBase.sol";
 
 import {ERC20Mock} from "../src/ERC20Mock.sol";
 
-
 // forge script script/DevnetCoprocessorDeployer.s.sol:DevnetCoprocessorDeployer --rpc-url $RPC_URL  --private-key $PRIVATE_KEY --broadcast -vvvv
 
 contract DevnetCoprocessorDeployer is CoprocessorDeployerBase {
-    //uint256 deployerKey;
     uint256[] operatorKeys;
     
     function setUp() public virtual {
-        //deployerKey = vm.envUint("PRIVATE_KEY");
-        
         operatorKeys = new uint256[](1);
         operatorKeys[0] = 0xc276a0e2815b89e9a3d8b64cb5d745d5b4f6b84531306c97aad82156000a7dd7; 
     }
@@ -59,7 +56,14 @@ contract DevnetCoprocessorDeployer is CoprocessorDeployerBase {
         deployStrategy(); // strategy is required for quorums
         
         setupAvsUamPermissions();
-        setupAvsQuorums();
+        
+        IStakeRegistryTypes.StrategyParams[] memory strategyParams =
+            new IStakeRegistryTypes.StrategyParams[](1);
+        strategyParams[0] = IStakeRegistryTypes.StrategyParams({
+            strategy: IStrategy(deployment.strategy),
+            multiplier: 1
+        });
+        setupAvsQuorums(strategyParams);
 
         deployL1L2Bridge();
         
@@ -72,18 +76,18 @@ contract DevnetCoprocessorDeployer is CoprocessorDeployerBase {
         for (uint256 i = 0; i < operatorKeys.length; i++) {
             uint256 operator = operatorKeys[i];
             address operatorAddress = vm.addr(operator);
-            sendEther(vm.addr(operator), 1 ether);
+            sendEther(operatorAddress, 1 ether);
             registerOperatorWithEigenLayer(operator);
             mintToken(deployment.strategyToken, operatorAddress, 20 ether);
             depositIntoStrategy(operator, deployment.strategy, 10 ether);
 
-           // !!!
-           /*
-           TestOperator memory o = createTestOperator("operator");
-           console.log(o.operator.key.addr);
-           registerOperatorWithAVS(o);
-           //registerOperatorWithAVS(o);
-           */
+            // Enable to test that operator registration works.
+            /*
+            TestOperator memory o = createTestOperator("operator");
+            console.log(o.operator.key.privateKey);
+            registerOperatorWithAVS(o);
+            //registerOperatorWithAVS(o);
+            */
         }
     }
 

@@ -325,24 +325,20 @@ contract CoprocessorDeployerBase is Script {
     }
 
     // TODO: setupAvsQuorums must read parameters of operator sets and strategies from json config
-    function setupAvsQuorums() internal {
+    function setupAvsQuorums(IStakeRegistryTypes.StrategyParams[] memory strategyParams) internal {
         vm.startBroadcast();
         
         ISlashingRegistryCoordinatorTypes.OperatorSetParam memory _operatorSetParam =
         ISlashingRegistryCoordinatorTypes.OperatorSetParam({
-            maxOperatorCount: 3,
+            maxOperatorCount: 5,
             kickBIPsOfOperatorStake: 100,
             kickBIPsOfTotalStake: 1000
         });
         uint96 minimumStake = 0;
-        IStakeRegistryTypes.StrategyParams[] memory _strategyParams =
-            new IStakeRegistryTypes.StrategyParams[](1);
-        IStrategy istrategy = IStrategy(deployment.strategy);
-        _strategyParams[0] =
-            IStakeRegistryTypes.StrategyParams({strategy: istrategy, multiplier: 1});
+        
         SlashingRegistryCoordinator regCoord =
             SlashingRegistryCoordinator(deployment.registryCoordinator);
-        regCoord.createTotalDelegatedStakeQuorum(_operatorSetParam, minimumStake, _strategyParams);
+        regCoord.createTotalDelegatedStakeQuorum(_operatorSetParam, minimumStake, strategyParams);
 
         vm.stopBroadcast();
     }
