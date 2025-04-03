@@ -74,8 +74,8 @@ contract DevnetCoprocessorDeployer is CoprocessorDeployerBase {
             address operatorAddress = vm.addr(operator);
             sendEther(vm.addr(operator), 1 ether);
             registerOperatorWithEigenLayer(operator);
-            mintToken(deployment.strategyToken, operatorAddress, 20);
-            depositIntoStrategy(operator, deployment.strategy, 10);
+            mintToken(deployment.strategyToken, operatorAddress, 20 ether);
+            depositIntoStrategy(operator, deployment.strategy, 10 ether);
 
            // !!!
            /*
