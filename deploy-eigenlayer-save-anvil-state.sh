@@ -31,4 +31,4 @@ start_anvil_docker "" $parent_path/env/eigenlayer/anvil/eigenlayer-deployed-anvi
 
 cd ./contracts
 cast rpc anvil_mine 2 --rpc-url $RPC_URL > /dev/null
-forge script script/DevnetEigenlayerDeployer.s.sol --rpc-url $RPC_URL --private-key $PRIVATE_KEY --broadcast -vvv
+forge script script/DevnetEigenlayerDeployer.s.sol --rpc-url $RPC_URL --private-key $PRIVATE_KEY --broadcast --ffi -vvv
