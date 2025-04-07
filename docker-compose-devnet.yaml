@@ -178,6 +178,7 @@ services:
   avs-sync:
     image: ghcr.io/layr-labs/avs-sync:latest
     container_name: avs-sync
+    # https://github.com/Layr-Labs/avs-sync/issues/67
     platform: linux/amd64
     depends_on:
       anvil:
@@ -196,5 +197,3 @@ services:
     networks:
       - coprocessor-network 
       
-    profiles:
-      - avssync
