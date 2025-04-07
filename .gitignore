@@ -19,3 +19,6 @@ docs/
 
 # Not sure what this folder is for.. so removing for now
 data/
+
+# Docker compose secrets
+anvil_fork_url_holesky.txt

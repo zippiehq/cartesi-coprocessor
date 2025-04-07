@@ -1,0 +1,16 @@
+{
+    "addresses": {
+      "allocationManager": "0x78469728304326CBc65f8f95FA756B0B73164462",
+      "avsDirectory": "0x055733000064333CaDDbC92763c58BF0192fFeBf",
+      "delegationManager": "0xA44151489861Fe9e3055d95adC98FbD462B948e7",
+      "eigenPodBeacon": "0x7261C2bd75a7ACE1762f6d7FAe8F63215581832D",
+      "eigenPodManager": "0x30770d7E3e71112d7A6b7259542D1f680a70e315",
+      "pauserRegistry": "0x85Ef7299F8311B25642679edBF02B62FA2212F06",
+      "permissionController": "0x598cb226B591155F767dA17AfE7A2241a68C5C10",
+      "proxyAdmin": "0xDB023566064246399b4AE851197a97729C93A6cf",
+      "rewardsCoordinator": "0xAcc1fb458a1317E886dB376Fc8141540537E68fE",
+      "strategyBeacon": "0xd3c6C6BA4E40dB9288c6a2077e5635344F8aFA4F",
+      "strategyFactory": "0x9c01252B580efD11a05C00Aa42Dd3ac1Ec52DF6d",
+      "strategyManager": "0xdfB5f6CE42aAA7830E94ECFCcAd411beF4d4D5b6"
+    }
+  }

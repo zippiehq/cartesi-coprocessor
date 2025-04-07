@@ -1,0 +1,20 @@
+{
+  "addresses": {
+    "blsApkRegistry": "0x2d7C3eA2d5bBD164098268c63ECE58405BDeaa4A",
+    "coprocessor": "0x6cc5b8C7df6A806963E61f95CB16eD09F177c4A3",
+    "coprocessorServiceManager": "0xc57E2052Cd788af8573C2472dcCaB09E6140f684",
+    "coprocessorToL2": "0x7C1D6710f77253E7c03fE83E4E65cBE2d178177D",
+    "indexRegistry": "0x1f7241cDDE12AE87CC030d5da7A9f385Dff367E8",
+    "l1Sender": "0xc121Eca6cCfDc9c385c9fb788762CC03397DCDF4",
+    "l2Coprocessor": "0xc75C40BaeEC1Fef59d0f3FC9f3E35FC8349096Fb",
+    "l2CoprocessorCaller": "0xc1eb49b92AF631f70D62899c4D0b0eA0476fff76",
+    "operatorStateRetriever": "0xe203D9d0D97C2e7206286AC9bfe9314f3Edd0Aac",
+    "proxyAdmin": "0xc55f48d5eb8DfCe4810c69C6a5d15c300e70c3D8",
+    "registryCoordinator": "0x13fCEB7078734997CD22e5CeFd89558c97e18638",
+    "slasher": "0x486C49116158D70791029DaF76AE227B175380C9",
+    "socketRegistry": "0x628A5BDfEfbdf0dD98066bF80e36F2c2F9Bb8F00",
+    "stakeRegistry": "0xdF582304420A499372e6442043621914511426Fe",
+    "strategy": "0x0000000000000000000000000000000000000000",
+    "strategyToken": "0x0000000000000000000000000000000000000000"
+  }
+}
