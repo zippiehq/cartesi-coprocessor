@@ -174,4 +174,27 @@ services:
      start_period: 10s
     networks:
       - coprocessor-network
-     
+
+  avs-sync:
+    image: ghcr.io/layr-labs/avs-sync:latest
+    container_name: avs-sync
+    platform: linux/amd64
+    depends_on:
+      anvil:
+        condition: service_healthy
+      setup-operator:
+        condition: service_completed_successfully
+    environment:
+      - AVS_SYNC_ECDSA_PRIVATE_KEY=ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+      - AVS_SYNC_ETH_HTTP_URL=http://anvil:8545
+      - AVS_SYNC_REGISTRY_COORDINATOR_ADDR=0x1291Be112d480055DaFd8a610b7d1e203891C274
+      - AVS_SYNC_OPERATOR_STATE_RETRIEVER_ADDR=0x5081a39b8A5f0E35a8D959395a630b68B74Dd30f  
+      - AVS_SYNC_SERVICE_MANAGER_ADDR=0x5eb3Bc0a489C5A8288765d2336659EbCA68FCd00 
+      - AVS_SYNC_USE_FIREBLOCKS=false
+      - AVS_SYNC_SYNC_INTERVAL=24h 
+      
+    networks:
+      - coprocessor-network 
+      
+    profiles:
+      - avssync
