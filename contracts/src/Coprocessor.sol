@@ -23,7 +23,7 @@ contract Coprocessor is BLSSignatureChecker, OperatorStateRetriever, Initializab
     using LibMerkle32 for bytes32[];
 
     constructor(ISlashingRegistryCoordinator _registryCoordinator) BLSSignatureChecker(_registryCoordinator) {
-	staleStakesForbidden = false;
+	staleStakesForbidden = true;
     }
 
     function initialize(address initialOwner) public initializer {
