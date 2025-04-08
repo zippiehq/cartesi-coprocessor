@@ -4,7 +4,19 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches: 
+      - main   
   workflow_dispatch:
+  
+env:
+  DAPP_NAME: test-app
+  CONTRACT_NAME: MyContract
+  OWNER_ADDRESS: "0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf"
+  SENDER_ADDRESS: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+  NETWORK: devnet 
+  SKIP_SANITY_CHECK: "true"
+   
 
 jobs:
   sanity-test:
@@ -28,6 +40,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y jq
 
       - name: Sanity Run
+        if: ${{ env.SKIP_SANITY_CHECK != 'true' }}
         run: |
           echo "Starting ensure process..."
           curl -X POST "http://localhost:3034/ensure/bafybeihpo6pncx7hyf26v6vszb25q4spszigxkfc4fxvamfzpy5b2bjydm/11084eeb3de8d6ad262736d1f59b129fc9c134ab52248d39c2c920facafe8403/289182342"
@@ -62,3 +75,99 @@ jobs:
           docker compose -f docker-compose-devnet.yaml logs
 
           echo "Sanity check completed successfully."
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+            node-version: '18' 
+            
+
+      - name: Install Rust and Cargo
+        uses: actions-rs/toolchain@v1
+        with:
+              profile: minimal
+              toolchain: stable
+              override: true
+  
+      - name: install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+           version:  stable
+             
+      - name: Install Cartesi Coprocessor cli
+        run: |
+          cargo install cartesi-coprocessor
+          cartesi-coprocessor --version
+      
+      - name: Install Cartesi CLI
+        run: npm i -g @cartesi/cli
+          
+  
+      - name: create Cartesi project
+        run: |
+            cartesi-coprocessor create --dapp-name ${{ env.DAPP_NAME }} --template python
+            cd ${{ env.DAPP_NAME }}
+
+      - name: Copy contract
+        run: |
+          cp .github/workflows/MyContract.sol ${{ env.DAPP_NAME }}/contracts/src/MyContract.sol
+
+      - name: Copy dapp.py  app
+        run: |
+            cp .github/workflows/dapp.py ${{ env.DAPP_NAME }}/dapp.py
+        
+      - name: publish Cartesi project
+        run: |
+            cd ${{ env.DAPP_NAME }}
+            cartesi-coprocessor publish --network ${{ env.NETWORK }}
+
+      - name: get machine_hash
+        id: get_hash
+        run: |
+          cd ${{ env.DAPP_NAME }}
+          MACHINE_HASH=$(xxd -c 0 -p .cartesi/image/hash)
+          echo "::set-output name=machine_hash::0x$MACHINE_HASH"
+       
+      - name: Deploy Contract
+        id: deploy
+        run: |
+          cd ${{ env.DAPP_NAME }}/contracts
+          DEPLOYMENT=$(cartesi-coprocessor deploy \
+            --contract-name ${{ env.CONTRACT_NAME }} \
+            --network ${{ env.NETWORK }} \
+            --constructor-args "${{ env.OWNER_ADDRESS }}" \
+            "${{ steps.get_hash.outputs.machine_hash }}")
+          echo "$DEPLOYMENT"
+          CONTRACT_ADDRESS=$(echo "$DEPLOYMENT" | grep 'Deployed to:' | awk '{print $3}')
+          echo "::set-output name=contract_address::$CONTRACT_ADDRESS"
+
+      - name: Execute Contract
+        run: |
+          cast send --unlocked \
+            --from ${{ env.SENDER_ADDRESS }} \
+            "${{ steps.deploy.outputs.contract_address }}" \
+            "runExecution(bytes)" "0x1234"
+
+      - name: Cast call
+        run: |
+          result=false
+          for i in {1..30}; do
+            result=$(cast call ${{ steps.deploy.outputs.contract_address }} "noticeHandled() returns (bool)")
+            echo "Result: $result"
+            if [ "$result" == "true" ]; then
+              echo "Notice handled successfully."
+              break
+            fi
+            echo "Still false, sleeping  ($i/30)"
+            sleep 1
+          done
+
+          echo "docker logs:"
+          docker compose -f docker-compose-devnet.yaml logs
+
+          if [ "$result" == "false" ]; then
+            echo "Notice not handled after 30 attempts."
+            exit 1
+          fi
+      
+  
