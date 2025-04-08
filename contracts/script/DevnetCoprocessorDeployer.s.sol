@@ -20,14 +20,15 @@ forge script script/DevnetCoprocessorDeployer.s.sol:DevnetCoprocessorDeployer \
 */
 
 contract DevnetCoprocessorDeployer is CoprocessorDeployerTest {
+    string[] operatorNames;
     uint256[] operatorKeys;
     
     function setUp() public virtual {
+        operatorNames = new string[](1);
+        operatorNames[0] = "operator1";
+        
         operatorKeys = new uint256[](1);
-        // for testing setup-operator
-        operatorKeys[0] = 0xc276a0e2815b89e9a3d8b64cb5d745d5b4f6b84531306c97aad82156000a7dd7; 
-        // for testing operator registration
-        // operatorKeys[0] = 60320572042965013730371936825825955422769740388281116725376228375435893381276;
+        operatorKeys[0] = 36407525368377311493796432571598967036725569564492624564850980679192418481618;
     }
     
     function run() external {
@@ -40,10 +41,13 @@ contract DevnetCoprocessorDeployer is CoprocessorDeployerTest {
         config.ejector = msg.sender;
         config.metdataURI = "ipfs://mock-metadata-uri";
         config.operatorWhitelistEnabled = true;
-        config.operatorWhitelist = new address[](1);
-        config.operatorWhitelist[0] = vm.addr(operatorKeys[0]);
-        // Enable to check that whitelist blocks unknown testing operator
-        // config.operatorWhitelist[0] = vm.addr(1);
+        config.operatorWhitelist = new address[](operatorKeys.length);
+        for (uint256 i = 0; i < operatorKeys.length; i++) {
+            config.operatorWhitelist[i] = vm.addr(operatorKeys[i]);
+            // Enable to check that whitelist blocks unknown testing operator
+            // config.operatorWhitelist[i] = vm.addr(1);
+        }
+        
 
         deployAvs();
         verifyAvsDeployment();
@@ -78,9 +82,12 @@ contract DevnetCoprocessorDeployer is CoprocessorDeployerTest {
 
             // Enable to test operator registration.
             /*
-            TestOperator memory o = createTestOperator("operator");
-            console.log("operator private key:", o.operator.key.privateKey);
-            registerOperatorWithAVS(o);
+            for (uint256 i = 0; i < operatorKeys.length; i++) {
+                string memory operatorName = operatorNames[i];
+                TestOperator memory o = createTestOperator(operatorName);
+                console.log(operatorName, "private key:", o.operator.key.privateKey);
+                registerOperatorWithAVS(o);
+            }
             */
         }
     }
