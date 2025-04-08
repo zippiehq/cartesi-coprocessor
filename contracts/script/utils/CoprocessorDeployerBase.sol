@@ -31,8 +31,6 @@ import {
     ISlashingRegistryCoordinator,
     ISlashingRegistryCoordinatorTypes
 } from "@eigenlayer-middleware/interfaces/ISlashingRegistryCoordinator.sol";
-import {SlashingRegistryCoordinator} from
-    "@eigenlayer-middleware/SlashingRegistryCoordinator.sol";
 import {RegistryCoordinator} from "@eigenlayer-middleware/RegistryCoordinator.sol";
 import {
     RegistryCoordinator,
@@ -53,6 +51,7 @@ import {UpgradeableProxyLib} from "./UpgradeableProxyLib.sol";
 import {ICoprocessor} from "../../src/ICoprocessor.sol";
 import {Coprocessor} from "../../src/Coprocessor.sol";
 import {CoprocessorServiceManager} from "../../eigenlayer/CoprocessorServiceManager.sol";
+import {CoprocessorRegistryCoordinator} from "../../eigenlayer/CoprocessorRegistryCoordinator.sol";
 import {ERC20Mock} from "../../src/ERC20Mock.sol";
 import {Mock_L2Coprocessor} from "../../src/Mock_L2Coprocessor.sol";
 import {MockL2CoprocessorCaller} from "../../src/Mock_L2CoprocessorCaller.sol";
@@ -156,7 +155,7 @@ contract CoprocessorDeployerBase is Script {
        
         // Deploy SlashingRegistryCoordinator 
         address registryCoordinatorImpl = address( 
-            new SlashingRegistryCoordinator(
+            new CoprocessorRegistryCoordinator(
                 IStakeRegistry(deployment.stakeRegistry),
                 IBLSApkRegistry(deployment.blsApkRegistry),
                 IIndexRegistry(deployment.indexRegistry),
@@ -185,13 +184,15 @@ contract CoprocessorDeployerBase is Script {
         
         // Upgrade and initialize SlashingRegistryCoordinator
         bytes memory registryCoordinatorUpgradeCall = abi.encodeCall(
-            SlashingRegistryCoordinator.initialize,
+            CoprocessorRegistryCoordinator.initialize,
             (
                 config.registryCoordinatorOwner,
                 config.churnApprover,
                 config.ejector,
                 0,
-                deployment.coprocessorServiceManager
+                deployment.coprocessorServiceManager,
+                config.operatorWhitelistEnabled,
+                config.operatorWhitelist
             )
         );
         UpgradeableProxyLib.upgradeAndCall(
@@ -229,8 +230,6 @@ contract CoprocessorDeployerBase is Script {
             CoprocessorServiceManager.initialize,
             (
                 ICoprocessor(coprocessorImpl), 
-                config.operatorWhitelistEnabled, 
-                config.operatorWhitelist, 
                 config.registryCoordinatorOwner
             )
         );
@@ -336,8 +335,8 @@ contract CoprocessorDeployerBase is Script {
         });
         uint96 minimumStake = 0;
         
-        SlashingRegistryCoordinator regCoord =
-            SlashingRegistryCoordinator(deployment.registryCoordinator);
+        CoprocessorRegistryCoordinator regCoord =
+            CoprocessorRegistryCoordinator(deployment.registryCoordinator);
         regCoord.createTotalDelegatedStakeQuorum(_operatorSetParam, minimumStake, strategyParams);
 
         vm.stopBroadcast();

@@ -27,7 +27,7 @@ contract DevnetCoprocessorDeployer is CoprocessorDeployerTest {
         // for testing setup-operator
         operatorKeys[0] = 0xc276a0e2815b89e9a3d8b64cb5d745d5b4f6b84531306c97aad82156000a7dd7; 
         // for testing operator registration
-        //operatorKeys[0] = 60320572042965013730371936825825955422769740388281116725376228375435893381276;
+        // operatorKeys[0] = 60320572042965013730371936825825955422769740388281116725376228375435893381276;
     }
     
     function run() external {
@@ -42,7 +42,9 @@ contract DevnetCoprocessorDeployer is CoprocessorDeployerTest {
         config.operatorWhitelistEnabled = true;
         config.operatorWhitelist = new address[](1);
         config.operatorWhitelist[0] = vm.addr(operatorKeys[0]);
-        
+        // Enable to check that whitelist blocks unknown testing operator
+        // config.operatorWhitelist[0] = vm.addr(1);
+
         deployAvs();
         verifyAvsDeployment();
 
