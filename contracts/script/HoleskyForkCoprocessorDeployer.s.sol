@@ -60,6 +60,8 @@ contract HoleskyForkCoprocessorDeployer is CoprocessorDeployerTest {
         config.operatorWhitelist = new address[](operatorKeys.length);
         for (uint256 i = 0; i < operatorKeys.length; i++) {
             config.operatorWhitelist[i] = vm.addr(operatorKeys[i]);
+            // Enable to check that whitelist blocks unknown testing operator
+            // config.operatorWhitelist[i] = vm.addr(1);
         }
         
         deployAvs();
