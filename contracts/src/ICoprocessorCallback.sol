@@ -2,6 +2,7 @@
 pragma solidity ^0.8.27;
 
 struct Response {
+    uint16 finish_reason;
     address ruleSet;
     bytes32 machineHash;
     bytes32 payloadHash;
