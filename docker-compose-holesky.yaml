@@ -18,13 +18,11 @@ services:
     container_name: anvil
     ports:
       - 127.0.0.1:8545:8545
-    volumes:
-      - ./:/cartesi-lambada-coprocessor/
-    command: /cartesi-lambada-coprocessor/env/eigenlayer/anvil/run-anvil-holesky.sh
+    command: /run-anvil-holesky.sh
 
     healthcheck:
 
-      test: bash -c "[ -f /cartesi-lambada-coprocessor/env/eigenlayer/anvil/holesky-fork-operators-ready.flag ]"
+      test: bash -c "[ -f //holesky-fork-operators-ready.flag ]"
       interval: 3s
       retries: 300
       start_period: 15s
@@ -36,29 +34,64 @@ services:
     secrets:
       - anvil_fork_url_holesky
 
-  operator:
+#  operatorX:
+#    image: ghcr.io/zippiehq/cartesi-coprocessor-operator:latest
+#    container_name: cartesi-coprocessor-operatorX
+#    ports:
+#      - 127.0.0.1:304X:3033
+#      - 127.0.0.1:500X:5001
+#    depends_on:
+#      anvil:
+#        condition: service_healthy
+#      setup-operatorX:
+#        condition: service_completed_successfully
+#    environment:
+#      BLS_PRIVATE_KEY: ""
+#      IPFS_DAEMON_OFFLINE: ${IPFS_DAEMON_ONLINE-true}
+#    networks:
+#      - coprocessor-network
+#
+#  setup-operatorX:
+#    image: ghcr.io/zippiehq/cartesi-coprocessor-operator:latest
+#    container_name: cartesi-coprocessor-setup-operatorX
+#    depends_on:
+#      anvil:
+#        condition: service_healthy
+#    volumes:
+#      - ./contracts/script/input/holesky_eigenlayer_deployment.json:/operator/contracts/script/input/holesky_eigenlayer_deployment.json
+#      - ./contracts/script/output/holesky_fork_coprocessor_deployment.json:/operator/contracts/script/output/holesky_fork_coprocessor_deployment.json
+#    environment:
+#      OPERATOR_BLS_KEY: ""
+#    command: >
+#      bash -c  "/operator/setup-operator
+#      --el-deployment-file-path contracts/script/input/holesky_eigenlayer_deployment.json
+#      --avs-deployment-file-path contracts/script/output/holesky_fork_coprocessor_deployment.json
+#      --operator-private-key 
+#      --operator-socket http://operatorX:3033
+#      --el-node-url http://anvil:8545"
+#    networks:
+#      - coprocessor-network
+#
+  operator1:
     image: ghcr.io/zippiehq/cartesi-coprocessor-operator:latest
-    container_name: cartesi-coprocessor-operator
+    container_name: cartesi-coprocessor-operator1
     ports:
-      - 127.0.0.1:3033:3033
+      - 127.0.0.1:3041:3033
       - 127.0.0.1:5001:5001
     depends_on:
       anvil:
         condition: service_healthy
-      setup-operator:
+      setup-operator1:
         condition: service_completed_successfully
-    volumes:
-      - ./demo-task:/operator/demo-task
     environment:
-      SNAPSHOT_DIR: demo-task
-      BLS_PRIVATE_KEY: ${OPERATOR_BLS_KEY:-13219903133444082589215719304558031505888625714969126489655808257015621956774}
+      BLS_PRIVATE_KEY: "21202655307791246795241072297561426972319640158631289607042740084739930473872"
       IPFS_DAEMON_OFFLINE: ${IPFS_DAEMON_ONLINE-true}
     networks:
       - coprocessor-network
 
-  setup-operator:
+  setup-operator1:
     image: ghcr.io/zippiehq/cartesi-coprocessor-operator:latest
-    container_name: cartesi-coprocessor-setup-operator
+    container_name: cartesi-coprocessor-setup-operator1
     depends_on:
       anvil:
         condition: service_healthy
@@ -66,16 +99,169 @@ services:
       - ./contracts/script/input/holesky_eigenlayer_deployment.json:/operator/contracts/script/input/holesky_eigenlayer_deployment.json
       - ./contracts/script/output/holesky_fork_coprocessor_deployment.json:/operator/contracts/script/output/holesky_fork_coprocessor_deployment.json
     environment:
-      OPERATOR_BLS_KEY: ${OPERATOR_BLS_KEY:-13219903133444082589215719304558031505888625714969126489655808257015621956774}
+      OPERATOR_BLS_KEY: "21202655307791246795241072297561426972319640158631289607042740084739930473872"
     command: >
       bash -c  "/operator/setup-operator
       --el-deployment-file-path contracts/script/input/holesky_eigenlayer_deployment.json
       --avs-deployment-file-path contracts/script/output/holesky_fork_coprocessor_deployment.json
       --operator-private-key 0x507dedda46e52e1145b3a81963b6a12b6abf667e85e4eee20b09a2dd294075d2
-      --operator-socket http://operator:3033
+      --operator-socket http://operator1:3033
       --el-node-url http://anvil:8545"
     networks:
       - coprocessor-network
+
+  operator2:
+    image: ghcr.io/zippiehq/cartesi-coprocessor-operator:latest
+    container_name: cartesi-coprocessor-operator2
+    ports:
+      - 127.0.0.1:3042:3033
+      - 127.0.0.1:5002:5001
+    depends_on:
+      anvil:
+        condition: service_healthy
+      setup-operator2:
+        condition: service_completed_successfully
+    environment:
+      BLS_PRIVATE_KEY: "14569232249593392680562525482747115011909482618514311133314202126924369270405"
+      IPFS_DAEMON_OFFLINE: ${IPFS_DAEMON_ONLINE-true}
+    networks:
+      - coprocessor-network
+
+  setup-operator2:
+    image: ghcr.io/zippiehq/cartesi-coprocessor-operator:latest
+    container_name: cartesi-coprocessor-setup-operator2
+    depends_on:
+      anvil:
+        condition: service_healthy
+    volumes:
+      - ./contracts/script/input/holesky_eigenlayer_deployment.json:/operator/contracts/script/input/holesky_eigenlayer_deployment.json
+      - ./contracts/script/output/holesky_fork_coprocessor_deployment.json:/operator/contracts/script/output/holesky_fork_coprocessor_deployment.json
+    environment:
+      OPERATOR_BLS_KEY: "14569232249593392680562525482747115011909482618514311133314202126924369270405"
+    command: >
+      bash -c  "/operator/setup-operator
+      --el-deployment-file-path contracts/script/input/holesky_eigenlayer_deployment.json
+      --avs-deployment-file-path contracts/script/output/holesky_fork_coprocessor_deployment.json
+      --operator-private-key 0x2837cbf35fa341554a92a26c673570a00ebacf5c529c5910c5c6dd34ffead9c4
+      --operator-socket http://operator2:3033
+      --el-node-url http://anvil:8545"
+    networks:
+      - coprocessor-network
+
+  operator3:
+    image: ghcr.io/zippiehq/cartesi-coprocessor-operator:latest
+    container_name: cartesi-coprocessor-operator3
+    ports:
+      - 127.0.0.1:3043:3033
+      - 127.0.0.1:5003:5001
+    depends_on:
+      anvil:
+        condition: service_healthy
+      setup-operator3:
+        condition: service_completed_successfully
+    environment:
+      BLS_PRIVATE_KEY: "7732870789640723952377830193689196285747802611272499810043968816831183198901"
+      IPFS_DAEMON_OFFLINE: ${IPFS_DAEMON_ONLINE-true}
+    networks:
+      - coprocessor-network
+
+  setup-operator3:
+    image: ghcr.io/zippiehq/cartesi-coprocessor-operator:latest
+    container_name: cartesi-coprocessor-setup-operator3
+    depends_on:
+      anvil:
+        condition: service_healthy
+    volumes:
+      - ./contracts/script/input/holesky_eigenlayer_deployment.json:/operator/contracts/script/input/holesky_eigenlayer_deployment.json
+      - ./contracts/script/output/holesky_fork_coprocessor_deployment.json:/operator/contracts/script/output/holesky_fork_coprocessor_deployment.json
+    environment:
+      OPERATOR_BLS_KEY: "7732870789640723952377830193689196285747802611272499810043968816831183198901"
+    command: >
+      bash -c  "/operator/setup-operator
+      --el-deployment-file-path contracts/script/input/holesky_eigenlayer_deployment.json
+      --avs-deployment-file-path contracts/script/output/holesky_fork_coprocessor_deployment.json
+      --operator-private-key 0xdced74f11b04b87aa94ca8ea7e94707b46c6f8e72b6a706c884b92ba54b4194e
+      --operator-socket http://operator3:3033
+      --el-node-url http://anvil:8545"
+    networks:
+      - coprocessor-network
+
+  operator4:
+    image: ghcr.io/zippiehq/cartesi-coprocessor-operator:latest
+    container_name: cartesi-coprocessor-operator4
+    ports:
+      - 127.0.0.1:3044:3033
+      - 127.0.0.1:5004:5001
+    depends_on:
+      anvil:
+        condition: service_healthy
+      setup-operator4:
+        condition: service_completed_successfully
+    environment:
+      BLS_PRIVATE_KEY: "13221979086321481360226988737477312358739823399192359031622155833458471339538"
+      IPFS_DAEMON_OFFLINE: ${IPFS_DAEMON_ONLINE-true}
+    networks:
+      - coprocessor-network
+
+  setup-operator4:
+    image: ghcr.io/zippiehq/cartesi-coprocessor-operator:latest
+    container_name: cartesi-coprocessor-setup-operator4
+    depends_on:
+      anvil:
+        condition: service_healthy
+    volumes:
+      - ./contracts/script/input/holesky_eigenlayer_deployment.json:/operator/contracts/script/input/holesky_eigenlayer_deployment.json
+      - ./contracts/script/output/holesky_fork_coprocessor_deployment.json:/operator/contracts/script/output/holesky_fork_coprocessor_deployment.json
+    environment:
+      OPERATOR_BLS_KEY: "13221979086321481360226988737477312358739823399192359031622155833458471339538"
+    command: >
+      bash -c  "/operator/setup-operator
+      --el-deployment-file-path contracts/script/input/holesky_eigenlayer_deployment.json
+      --avs-deployment-file-path contracts/script/output/holesky_fork_coprocessor_deployment.json
+      --operator-private-key 0x879ae27232fd23a118b437b6be989e6daab357a5e67a37995381503fcd9f8dae
+      --operator-socket http://operator4:3033
+      --el-node-url http://anvil:8545"
+    networks:
+      - coprocessor-network
+
+  operator5:
+    image: ghcr.io/zippiehq/cartesi-coprocessor-operator:latest
+    container_name: cartesi-coprocessor-operator5
+    ports:
+      - 127.0.0.1:3045:3033
+      - 127.0.0.1:5005:5001
+    depends_on:
+      anvil:
+        condition: service_healthy
+      setup-operator1:
+        condition: service_completed_successfully
+    environment:
+      BLS_PRIVATE_KEY: "11115571193000951009639913756669211869842780277050723230099970780677465123768"
+      IPFS_DAEMON_OFFLINE: ${IPFS_DAEMON_ONLINE-true}
+    networks:
+      - coprocessor-network
+
+  setup-operator5:
+    image: ghcr.io/zippiehq/cartesi-coprocessor-operator:latest
+    container_name: cartesi-coprocessor-setup-operator5
+    depends_on:
+      anvil:
+        condition: service_healthy
+    volumes:
+      - ./contracts/script/input/holesky_eigenlayer_deployment.json:/operator/contracts/script/input/holesky_eigenlayer_deployment.json
+      - ./contracts/script/output/holesky_fork_coprocessor_deployment.json:/operator/contracts/script/output/holesky_fork_coprocessor_deployment.json
+    environment:
+      OPERATOR_BLS_KEY: "11115571193000951009639913756669211869842780277050723230099970780677465123768"
+    command: >
+      bash -c  "/operator/setup-operator
+      --el-deployment-file-path contracts/script/input/holesky_eigenlayer_deployment.json
+      --avs-deployment-file-path contracts/script/output/holesky_fork_coprocessor_deployment.json
+      --operator-private-key 0xb403a112100a7dff34373073fd5eca128e98b9a5a5da01244c8e04d73e16d659
+      --operator-socket http://operator5:3033
+      --el-node-url http://anvil:8545"
+    networks:
+      - coprocessor-network
+
 
   postgres:
     image: postgres:latest
@@ -94,12 +280,20 @@ services:
     depends_on:
       anvil:
         condition: service_healthy
-      setup-operator:
+      setup-operator1:
+        condition: service_completed_successfully
+      setup-operator2:
+        condition: service_completed_successfully
+      setup-operator3:
+        condition: service_completed_successfully
+      setup-operator4:
+        condition: service_completed_successfully
+      setup-operator5:
         condition: service_completed_successfully
     volumes:
       - ./config-holesky.toml:/cartesi-coprocessor-solver/config.toml
     environment:
-      - RUST_LOG=trace
+      - RUST_LOG=info
     networks:
       - coprocessor-network
 
