@@ -9,9 +9,7 @@ import "./ICoprocessorL2Sender.sol";
 import "./Coprocessor.sol";
 
 contract CoprocessorToL2 is Coprocessor {
-
-    constructor(ISlashingRegistryCoordinator _registryCoordinator)
-    Coprocessor(_registryCoordinator) {}
+    constructor(ISlashingRegistryCoordinator _registryCoordinator) Coprocessor(_registryCoordinator) {}
 
     function solverCallbackNoOutputs(
         Response calldata resp,
@@ -23,7 +21,14 @@ contract CoprocessorToL2 is Coprocessor {
         ICoprocessorL2Sender l2Sender,
         bytes calldata senderData
     ) external payable {
-        check(resp, quorumNumbers, quorumThresholdPercentage, thresholdDenominator, blockNumber, nonSignerStakesAndSignature);
+        check(
+            resp,
+            quorumNumbers,
+            quorumThresholdPercentage,
+            thresholdDenominator,
+            blockNumber,
+            nonSignerStakesAndSignature
+        );
         bytes memory encodedResp = abi.encode(resp);
         bytes32 respHash = keccak256(encodedResp);
         l2Sender.sendMessage{value: msg.value}(respHash, senderData);

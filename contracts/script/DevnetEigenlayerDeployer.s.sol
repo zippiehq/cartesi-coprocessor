@@ -18,16 +18,12 @@ contract DevnetEigenlayerDeployer is Script {
 
         EigenlayerDeploymentLib.DeploymentConfig memory config =
             EigenlayerDeploymentLib.readDeploymentConfig("./script/input/devnet_eigenlayer_deployment_config.json");
-        
-        EigenlayerDeploymentLib.Deployment memory deployment =
-            EigenlayerDeploymentLib.deployContracts(
-                config,
-                msg.sender
-            );
 
-        EigenlayerDeploymentLib
-            .writeDeployment(deployment, "./script/output/devnet_eigenlayer_deployment.json");
-                
+        EigenlayerDeploymentLib.Deployment memory deployment =
+            EigenlayerDeploymentLib.deployContracts(config, msg.sender);
+
+        EigenlayerDeploymentLib.writeDeployment(deployment, "./script/output/devnet_eigenlayer_deployment.json");
+
         vm.stopBroadcast();
     }
 }
