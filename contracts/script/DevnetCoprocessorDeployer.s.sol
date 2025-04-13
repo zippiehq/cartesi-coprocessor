@@ -22,15 +22,15 @@ forge script script/DevnetCoprocessorDeployer.s.sol:DevnetCoprocessorDeployer \
 contract DevnetCoprocessorDeployer is CoprocessorDeployerTest {
     string[] operatorNames;
     uint256[] operatorKeys;
-    
+
     function setUp() public virtual {
         operatorNames = new string[](1);
         operatorNames[0] = "operator1";
-        
+
         operatorKeys = new uint256[](1);
         operatorKeys[0] = 36407525368377311493796432571598967036725569564492624564850980679192418481618;
     }
-    
+
     function run() external {
         el_deployment = EigenlayerDeploymentLib.readDeployment("./script/output/devnet_eigenlayer_deployment.json");
 
@@ -47,28 +47,24 @@ contract DevnetCoprocessorDeployer is CoprocessorDeployerTest {
             // Enable to check that whitelist blocks unknown testing operator
             // config.operatorWhitelist[i] = vm.addr(1);
         }
-        
 
         deployAvs();
         verifyAvsDeployment();
 
         deployStrategy(); // strategy is required for quorums
-        
+
         setupAvsUamPermissions();
-        
-        IStakeRegistryTypes.StrategyParams[] memory strategyParams =
-            new IStakeRegistryTypes.StrategyParams[](1);
-        strategyParams[0] = IStakeRegistryTypes.StrategyParams({
-            strategy: IStrategy(deployment.strategy),
-            multiplier: 1
-        });
+
+        IStakeRegistryTypes.StrategyParams[] memory strategyParams = new IStakeRegistryTypes.StrategyParams[](1);
+        strategyParams[0] =
+            IStakeRegistryTypes.StrategyParams({strategy: IStrategy(deployment.strategy), multiplier: 1});
         setupAvsQuorums(strategyParams);
 
         deployL1L2Bridge();
-        
+
         this.setupOperators();
 
-        writeDeployment("./script/output/devnet_coprocessor_deployment.json");                
+        writeDeployment("./script/output/devnet_coprocessor_deployment.json");
     }
 
     function setupOperators() external payable {

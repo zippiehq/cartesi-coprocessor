@@ -17,13 +17,16 @@ import "@eigenlayer-middleware/libraries/BN254.sol";
 import {LibMerkle32} from "./LibMerkle32.sol";
 import "./ICoprocessorCallback.sol";
 
-
 contract Coprocessor is BLSSignatureChecker, OperatorStateRetriever, Initializable, OwnableUpgradeable {
     using BN254 for BN254.G1Point;
     using LibMerkle32 for bytes32[];
 
+    bytes public constant QUORUM_NUMBERS = hex"00";
+    uint32 public constant QUORUM_THRESHOLD_PERCENTAGE = 67;
+    uint8 public constant QUORUM_THRESHOLD_DENOMINATOR = 100;
+
     constructor(ISlashingRegistryCoordinator _registryCoordinator) BLSSignatureChecker(_registryCoordinator) {
-	staleStakesForbidden = true;
+        staleStakesForbidden = true;
     }
 
     function initialize(address initialOwner) public initializer {
@@ -65,13 +68,12 @@ contract Coprocessor is BLSSignatureChecker, OperatorStateRetriever, Initializab
     function solverCallbackOutputsOnly(
         Response calldata resp,
         bytes calldata quorumNumbers,
-        uint32 quorumThresholdPercentage,
-        uint8 thresholdDenominator,
         uint32 blockNumber,
         NonSignerStakesAndSignature memory nonSignerStakesAndSignature,
         address callback_address,
         bytes[] calldata outputs
     ) public {
+        require(quorumNumbers[0] == QUORUM_NUMBERS[0] && quorumNumbers.length == QUORUM_NUMBERS.length);
         bytes32[] memory outputsHashes = new bytes32[](outputs.length);
         for (uint256 i = 0; i < outputs.length; i++) {
             outputsHashes[i] = keccak256(outputs[i]);
@@ -81,13 +83,26 @@ contract Coprocessor is BLSSignatureChecker, OperatorStateRetriever, Initializab
         check(
             resp,
             quorumNumbers,
-            quorumThresholdPercentage,
-            thresholdDenominator,
+            QUORUM_THRESHOLD_PERCENTAGE,
+            QUORUM_THRESHOLD_DENOMINATOR,
             blockNumber,
             nonSignerStakesAndSignature
         );
 
         ICoprocessorCallback callbackContract = ICoprocessorCallback(callback_address);
         callbackContract.coprocessorCallbackOutputsOnly(resp.machineHash, resp.payloadHash, outputs);
+    }
+
+    function solverCallbackOutputsOnly(
+        Response calldata resp,
+        bytes calldata quorumNumbers,
+        uint32 quorumThresholdPercentage,
+        uint8 thresholdDenominator,
+        uint32 blockNumber,
+        NonSignerStakesAndSignature memory nonSignerStakesAndSignature,
+        address callback_address,
+        bytes[] calldata outputs
+    ) public {
+        this.solverCallbackOutputsOnly(resp, quorumNumbers, blockNumber, nonSignerStakesAndSignature, callback_address, outputs);
     }
 }

@@ -27,10 +27,10 @@ interface IWETH {
 contract HoleskyForkCoprocessorDeployer is CoprocessorDeployerTest {
     address constant WETH_ADDRESS = 0x94373a4919B3240D86eA41593D5eBa789FEF3848;
     address constant WETH_STRATEGY_ADDRESS = 0x80528D6e9A2BAbFc766965E0E26d5aB08D9CFaF9;
-    
+
     string[] operatorNames;
     uint256[] operatorKeys;
-    
+
     function setUp() public virtual {
         operatorNames = new string[](5);
         operatorNames[0] = "operator1";
@@ -38,7 +38,7 @@ contract HoleskyForkCoprocessorDeployer is CoprocessorDeployerTest {
         operatorNames[2] = "operator3";
         operatorNames[3] = "operator4";
         operatorNames[4] = "operator5";
-        
+
         operatorKeys = new uint256[](5);
         operatorKeys[0] = 36407525368377311493796432571598967036725569564492624564850980679192418481618;
         operatorKeys[1] = 18191098147740732280693182866451768943100355768310205068615561759894742424004;
@@ -46,7 +46,7 @@ contract HoleskyForkCoprocessorDeployer is CoprocessorDeployerTest {
         operatorKeys[3] = 61335891880194878340472580074183423963030147272304747695685225805187806891438;
         operatorKeys[4] = 81422724954312471246955407297969567897969226523421875976253813863001483564633;
     }
-    
+
     function run() external {
         el_deployment = EigenlayerDeploymentLib.readDeployment("./script/input/holesky_eigenlayer_deployment.json");
 
@@ -63,25 +63,22 @@ contract HoleskyForkCoprocessorDeployer is CoprocessorDeployerTest {
             // Enable to check that whitelist blocks unknown testing operator
             // config.operatorWhitelist[i] = vm.addr(1);
         }
-        
+
         deployAvs();
         verifyAvsDeployment();
 
         setupAvsUamPermissions();
-        
-        IStakeRegistryTypes.StrategyParams[] memory strategyParams =
-            new IStakeRegistryTypes.StrategyParams[](1);
-        strategyParams[0] = IStakeRegistryTypes.StrategyParams({
-            strategy: IStrategy(WETH_STRATEGY_ADDRESS),
-            multiplier: 1
-        });        
+
+        IStakeRegistryTypes.StrategyParams[] memory strategyParams = new IStakeRegistryTypes.StrategyParams[](1);
+        strategyParams[0] =
+            IStakeRegistryTypes.StrategyParams({strategy: IStrategy(WETH_STRATEGY_ADDRESS), multiplier: 1});
         setupAvsQuorums(strategyParams);
 
         deployL1L2Bridge();
-        
+
         this.setupOperators();
 
-        writeDeployment("./script/output/holesky_fork_coprocessor_deployment.json");                
+        writeDeployment("./script/output/holesky_fork_coprocessor_deployment.json");
     }
 
     function setupOperators() external payable {

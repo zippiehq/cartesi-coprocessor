@@ -13,12 +13,16 @@ import "@eigenlayer/interfaces/IDelegationManager.sol";
 import "@eigenlayer/interfaces/IAllocationManager.sol";
 import {IStrategyManager} from "@eigenlayer/interfaces/IStrategyManager.sol";
 
-import {SlashingRegistryCoordinator} from"@eigenlayer-middleware/SlashingRegistryCoordinator.sol";
+import {SlashingRegistryCoordinator} from "@eigenlayer-middleware/SlashingRegistryCoordinator.sol";
 import {OperatorWalletLib, Operator} from "@eigenlayer-middleware-test/utils/OperatorWalletLib.sol";
 import {ISlashingRegistryCoordinatorTypes} from "@eigenlayer-middleware/interfaces/ISlashingRegistryCoordinator.sol";
 import {IBLSApkRegistryTypes} from "@eigenlayer-middleware/interfaces/IBLSApkRegistry.sol";
 import {BN254} from "@eigenlayer-middleware/libraries/BN254.sol";
-import {Operator, OperatorWalletLib, SigningKeyOperationsLib} from "@eigenlayer-middleware-test/utils/OperatorWalletLib.sol";
+import {
+    Operator,
+    OperatorWalletLib,
+    SigningKeyOperationsLib
+} from "@eigenlayer-middleware-test/utils/OperatorWalletLib.sol";
 import {IStakeRegistryTypes} from "@eigenlayer-middleware/interfaces/IStakeRegistry.sol";
 import {OperatorStateRetriever} from "@eigenlayer-middleware/OperatorStateRetriever.sol";
 
@@ -58,20 +62,15 @@ contract CoprocessorDeployerTest is CoprocessorDeployerBase {
             0x0000000000000000000000000000000000000000,
             0,
             "https://raw.githubusercontent.com/tantatnhan/chainbase/refs/heads/main/metadata.json"
-        ); 
+        );
         vm.stopBroadcast();
     }
 
-    function depositIntoStrategy(
-        uint256 operator,
-        address startegy,
-        uint256 amount
-    ) internal {
+    function depositIntoStrategy(uint256 operator, address startegy, uint256 amount) internal {
         vm.startBroadcast(operator);
         IERC20 erc20 = IStrategy(startegy).underlyingToken();
         erc20.approve(el_deployment.strategyManager, amount);
-        IStrategyManager(el_deployment.strategyManager)
-            .depositIntoStrategy(IStrategy(startegy), erc20, amount);
+        IStrategyManager(el_deployment.strategyManager).depositIntoStrategy(IStrategy(startegy), erc20, amount);
         vm.stopBroadcast();
     }
 
@@ -82,13 +81,12 @@ contract CoprocessorDeployerTest is CoprocessorDeployerBase {
 
     function createTestOperator(string memory name) internal returns (TestOperator memory) {
         Operator memory operator = OperatorWalletLib.createOperator(name);
-        
-        bytes32 messageHash =
-            SlashingRegistryCoordinator(deployment.registryCoordinator)
+
+        bytes32 messageHash = SlashingRegistryCoordinator(deployment.registryCoordinator)
             .calculatePubkeyRegistrationMessageHash(operator.key.addr);
-        BN254.G1Point memory signature =
-            SigningKeyOperationsLib.sign(operator.signingKey, messageHash);
-        IBLSApkRegistryTypes.PubkeyRegistrationParams memory pubKeyParams = IBLSApkRegistryTypes.PubkeyRegistrationParams({
+        BN254.G1Point memory signature = SigningKeyOperationsLib.sign(operator.signingKey, messageHash);
+        IBLSApkRegistryTypes.PubkeyRegistrationParams memory pubKeyParams = IBLSApkRegistryTypes
+            .PubkeyRegistrationParams({
             pubkeyRegistrationSignature: signature,
             pubkeyG1: operator.signingKey.publicKeyG1,
             pubkeyG2: operator.signingKey.publicKeyG2
@@ -104,14 +102,9 @@ contract CoprocessorDeployerTest is CoprocessorDeployerBase {
         IAllocationManagerTypes.RegisterParams memory params = IAllocationManagerTypes.RegisterParams({
             avs: deployment.coprocessorServiceManager,
             operatorSetIds: oids,
-            data: abi.encode(
-                ISlashingRegistryCoordinatorTypes.RegistrationType.NORMAL, "socket", operator.pubKeyParams
-            )
+            data: abi.encode(ISlashingRegistryCoordinatorTypes.RegistrationType.NORMAL, "socket", operator.pubKeyParams)
         });
-        IAllocationManager(el_deployment.allocationManager).registerForOperatorSets(
-            operator.operator.key.addr,
-            params
-        );
+        IAllocationManager(el_deployment.allocationManager).registerForOperatorSets(operator.operator.key.addr, params);
         vm.stopBroadcast();
     }
 }

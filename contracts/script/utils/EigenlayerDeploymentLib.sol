@@ -6,8 +6,7 @@ import {Vm} from "forge-std/Vm.sol";
 import {stdJson} from "forge-std/StdJson.sol";
 
 import {ProxyAdmin} from "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
-import {TransparentUpgradeableProxy} from
-    "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
+import {TransparentUpgradeableProxy} from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 import {UpgradeableBeacon} from "@openzeppelin/contracts/proxy/beacon/UpgradeableBeacon.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
@@ -99,10 +98,7 @@ library EigenlayerDeploymentLib {
         address permissionController;
     }
 
-    function deployContracts(
-        DeploymentConfig memory config,
-        address deployer
-    ) internal returns (Deployment memory) {
+    function deployContracts(DeploymentConfig memory config, address deployer) internal returns (Deployment memory) {
         Deployment memory result;
 
         result.proxyAdmin = UpgradeableProxyLib.deployProxyAdmin();
@@ -148,17 +144,13 @@ library EigenlayerDeploymentLib {
 
         address strategyManagerImpl = address(
             new StrategyManager(
-                IDelegationManager(result.delegationManager),
-                IPauserRegistry(result.pauserRegistry),
-                EIGENLAYER_VERSION
+                IDelegationManager(result.delegationManager), IPauserRegistry(result.pauserRegistry), EIGENLAYER_VERSION
             )
         );
 
         address strategyFactoryImpl = address(
             new StrategyFactory(
-                IStrategyManager(result.strategyManager),
-                IPauserRegistry(result.pauserRegistry),
-                EIGENLAYER_VERSION
+                IStrategyManager(result.strategyManager), IPauserRegistry(result.pauserRegistry), EIGENLAYER_VERSION
             )
         );
 
@@ -229,9 +221,7 @@ library EigenlayerDeploymentLib {
         );
         address baseStrategyImpl = address(
             new StrategyBase(
-                IStrategyManager(result.strategyManager),
-                IPauserRegistry(result.pauserRegistry),
-                EIGENLAYER_VERSION
+                IStrategyManager(result.strategyManager), IPauserRegistry(result.pauserRegistry), EIGENLAYER_VERSION
             )
         );
         /// TODO: PauserRegistry isn't upgradeable
@@ -248,9 +238,7 @@ library EigenlayerDeploymentLib {
                 config.delegationManager.initPausedStatus // initialPausedStatus
             )
         );
-        UpgradeableProxyLib.upgradeAndCall(
-            result.delegationManager, delegationManagerImpl, upgradeCall
-        );
+        UpgradeableProxyLib.upgradeAndCall(result.delegationManager, delegationManagerImpl, upgradeCall);
 
         // Upgrade StrategyManager contract
         upgradeCall = abi.encodeCall(
@@ -313,9 +301,7 @@ library EigenlayerDeploymentLib {
                 uint16(config.rewardsCoordinator.globalOperatorCommissionBips) // _globalCommissionBips
             )
         );
-        UpgradeableProxyLib.upgradeAndCall(
-            result.rewardsCoordinator, rewardsCoordinatorImpl, upgradeCall
-        );
+        UpgradeableProxyLib.upgradeAndCall(result.rewardsCoordinator, rewardsCoordinatorImpl, upgradeCall);
 
         // Upgrade EigenPod contract
         upgradeCall = abi.encodeCall(
@@ -335,18 +321,14 @@ library EigenlayerDeploymentLib {
                 config.delegationManager.initPausedStatus // initialPausedStatus
             )
         );
-        UpgradeableProxyLib.upgradeAndCall(
-            result.allocationManager, allocationManagerImpl, upgradeCall
-        );
+        UpgradeableProxyLib.upgradeAndCall(result.allocationManager, allocationManagerImpl, upgradeCall);
 
         return result;
     }
 
     // StrategyConfig[] strategies;
 
-    function readDeploymentConfig(
-        string memory pathToFile
-    ) internal returns (DeploymentConfig memory) {
+    function readDeploymentConfig(string memory pathToFile) internal returns (DeploymentConfig memory) {
         require(vm.exists(pathToFile), "Deployment file does not exist");
 
         string memory json = vm.readFile(pathToFile);
@@ -357,45 +339,35 @@ library EigenlayerDeploymentLib {
         config.strategyManager.initPausedStatus = json.readUint(".strategyManager.init_paused_status");
         config.strategyManager.initWithdrawalDelayBlocks =
             uint32(json.readUint(".strategyManager.init_withdrawal_delay_blocks"));
-        
+
         // DelegationManager
         config.delegationManager.initPausedStatus = json.readUint(".delegation.init_paused_status");
-        config.delegationManager.withdrawalDelayBlocks =
-            json.readUint(".delegation.init_withdrawal_delay_blocks");
-        
+        config.delegationManager.withdrawalDelayBlocks = json.readUint(".delegation.init_withdrawal_delay_blocks");
+
         // EigenPodManager
         config.eigenPodManager.initPausedStatus = json.readUint(".eigenPodManager.init_paused_status");
 
         // RewardsCoordinator
-        config.rewardsCoordinator.initPausedStatus =
-            json.readUint(".rewardsCoordinator.init_paused_status");
-        config.rewardsCoordinator.maxRewardsDuration =
-            json.readUint(".rewardsCoordinator.MAX_REWARDS_DURATION");
-        config.rewardsCoordinator.maxRetroactiveLength =
-            json.readUint(".rewardsCoordinator.MAX_RETROACTIVE_LENGTH");
-        config.rewardsCoordinator.maxFutureLength =
-            json.readUint(".rewardsCoordinator.MAX_FUTURE_LENGTH");
+        config.rewardsCoordinator.initPausedStatus = json.readUint(".rewardsCoordinator.init_paused_status");
+        config.rewardsCoordinator.maxRewardsDuration = json.readUint(".rewardsCoordinator.MAX_REWARDS_DURATION");
+        config.rewardsCoordinator.maxRetroactiveLength = json.readUint(".rewardsCoordinator.MAX_RETROACTIVE_LENGTH");
+        config.rewardsCoordinator.maxFutureLength = json.readUint(".rewardsCoordinator.MAX_FUTURE_LENGTH");
         config.rewardsCoordinator.genesisRewardsTimestamp =
             json.readUint(".rewardsCoordinator.GENESIS_REWARDS_TIMESTAMP");
-        config.rewardsCoordinator.updater =
-            json.readAddress(".rewardsCoordinator.rewards_updater_address");
-        config.rewardsCoordinator.activationDelay =
-            json.readUint(".rewardsCoordinator.activation_delay");
+        config.rewardsCoordinator.updater = json.readAddress(".rewardsCoordinator.rewards_updater_address");
+        config.rewardsCoordinator.activationDelay = json.readUint(".rewardsCoordinator.activation_delay");
         config.rewardsCoordinator.calculationIntervalSeconds =
             json.readUint(".rewardsCoordinator.calculation_interval_seconds");
         config.rewardsCoordinator.globalOperatorCommissionBips =
             json.readUint(".rewardsCoordinator.global_operator_commission_bips");
 
         // StrategyFactory
-        config.strategyManager.initPausedStatus = 
-            json.readUint(".strategyFactory.init_paused_status");
+        config.strategyManager.initPausedStatus = json.readUint(".strategyFactory.init_paused_status");
 
         return config;
     }
 
-    function readDeployment(
-        string memory pathToFile
-    ) internal returns (Deployment memory) {
+    function readDeployment(string memory pathToFile) internal returns (Deployment memory) {
         require(vm.exists(pathToFile), "Deployment file does not exist");
 
         string memory json = vm.readFile(pathToFile);
@@ -417,12 +389,9 @@ library EigenlayerDeploymentLib {
         return deployment;
     }
 
-    function writeDeployment(
-        Deployment memory deployment,
-        string memory filePath
-    ) internal {
+    function writeDeployment(Deployment memory deployment, string memory filePath) internal {
         string memory parentObject = "parent object";
-        
+
         string memory addresses = "addresses";
         vm.serializeAddress(addresses, "proxyAdmin", address(deployment.proxyAdmin));
         vm.serializeAddress(addresses, "delegationManager", address(deployment.delegationManager));
@@ -438,7 +407,7 @@ library EigenlayerDeploymentLib {
         vm.serializeAddress(addresses, "permissionController", address(deployment.permissionController));
         string memory adressesJson =
             vm.serializeAddress(addresses, "permissionController", address(deployment.permissionController));
-        
+
         string memory deploymentJson = vm.serializeString(parentObject, addresses, adressesJson);
         vm.writeJson(deploymentJson, filePath);
     }

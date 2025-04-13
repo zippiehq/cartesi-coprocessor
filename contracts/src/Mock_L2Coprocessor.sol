@@ -8,6 +8,7 @@ import {LibMerkle32} from "./LibMerkle32.sol";
 
 contract Mock_L2Coprocessor {
     using LibMerkle32 for bytes32[];
+
     address public l1Coordinator;
     address public l1Sender;
 
@@ -30,17 +31,14 @@ contract Mock_L2Coprocessor {
         responses[responseHash] = true;
         emit TaskCompleted(responseHash);
     }
+
     function setL1Sender(address _newL1Sender) external {
         require(msg.sender == l1Sender || l1Sender == address(0), "Unauthorized caller");
         require(_newL1Sender != address(0), "Cannot set l1Sender to zero address");
         l1Sender = _newL1Sender;
     }
 
-    function callbackWithOutputs(
-        Response calldata resp,
-        bytes[] calldata outputs,
-        address callbackAddress
-    ) public {
+    function callbackWithOutputs(Response calldata resp, bytes[] calldata outputs, address callbackAddress) public {
         console.log("1");
         bytes32 respHash = keccak256(abi.encode(resp));
         console.log("2");
@@ -55,7 +53,9 @@ contract Mock_L2Coprocessor {
         require(resp.outputMerkle == LibMerkle32.merkleRoot(outputsHashes, 63), "M");
         console.log("4");
 
-        ICoprocessorCallback(callbackAddress).coprocessorCallbackOutputsOnly(resp.machineHash, resp.payloadHash, outputs);
+        ICoprocessorCallback(callbackAddress).coprocessorCallbackOutputsOnly(
+            resp.machineHash, resp.payloadHash, outputs
+        );
         console.log("5");
     }
 }
