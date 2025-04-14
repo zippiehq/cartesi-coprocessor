@@ -103,6 +103,8 @@ contract Coprocessor is BLSSignatureChecker, OperatorStateRetriever, Initializab
         address callback_address,
         bytes[] calldata outputs
     ) public {
-        this.solverCallbackOutputsOnly(resp, quorumNumbers, blockNumber, nonSignerStakesAndSignature, callback_address, outputs);
+        this.solverCallbackOutputsOnly(
+            resp, quorumNumbers, blockNumber, nonSignerStakesAndSignature, callback_address, outputs
+        );
     }
 }
