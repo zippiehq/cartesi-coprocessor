@@ -71,7 +71,8 @@ contract Coprocessor is BLSSignatureChecker, OperatorStateRetriever, Initializab
         uint32 blockNumber,
         NonSignerStakesAndSignature memory nonSignerStakesAndSignature,
         address callback_address,
-        bytes[] calldata outputs
+        bytes[] calldata outputs,
+        uint8 callback_version
     ) public {
         require(quorumNumbers[0] == QUORUM_NUMBERS[0] && quorumNumbers.length == QUORUM_NUMBERS.length);
         bytes32[] memory outputsHashes = new bytes32[](outputs.length);
@@ -89,22 +90,11 @@ contract Coprocessor is BLSSignatureChecker, OperatorStateRetriever, Initializab
             nonSignerStakesAndSignature
         );
 
-        ICoprocessorCallback callbackContract = ICoprocessorCallback(callback_address);
-        callbackContract.coprocessorCallbackOutputsOnly(resp.machineHash, resp.payloadHash, outputs);
-    }
-
-    function solverCallbackOutputsOnly(
-        Response calldata resp,
-        bytes calldata quorumNumbers,
-        uint32 quorumThresholdPercentage,
-        uint8 thresholdDenominator,
-        uint32 blockNumber,
-        NonSignerStakesAndSignature memory nonSignerStakesAndSignature,
-        address callback_address,
-        bytes[] calldata outputs
-    ) public {
-        this.solverCallbackOutputsOnly(
-            resp, quorumNumbers, blockNumber, nonSignerStakesAndSignature, callback_address, outputs
-        );
+        ICoprocessorCallbackCompat callbackContract = ICoprocessorCallbackCompat(callback_address);
+        if (callback_version == 1) {
+            callbackContract.coprocessorCallbackOutputsOnly(resp.machineHash, resp.payloadHash, outputs);
+        } else if (callback_version == 2) {
+            callbackContract.coprocessorCallbackV2(resp.finish_reason, resp.machineHash, resp.payloadHash, outputs);
+        }
     }
 }
