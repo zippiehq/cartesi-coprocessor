@@ -53,8 +53,8 @@ contract Mock_L2Coprocessor {
         require(resp.outputMerkle == LibMerkle32.merkleRoot(outputsHashes, 63), "M");
         console.log("4");
 
-        ICoprocessorCallback(callbackAddress).coprocessorCallbackOutputsOnly(
-            resp.machineHash, resp.payloadHash, outputs
+        ICoprocessorCallback(callbackAddress).coprocessorCallbackV2(
+            resp.finish_reason, resp.machineHash, resp.payloadHash, outputs
         );
         console.log("5");
     }

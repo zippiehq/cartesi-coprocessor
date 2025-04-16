@@ -17,10 +17,14 @@ contract MockL2CoprocessorCaller is ICoprocessorCallback {
         Mock_L2Coprocessor(coprocessor).issueTask(machineHash, input, address(this));
     }
 
-    function coprocessorCallbackOutputsOnly(bytes32 machineHash, bytes32 payloadHash, bytes[] calldata outputs)
+    function coprocessorCallbackV2(uint16 reason, bytes32 machineHash, bytes32 payloadHash, bytes[] calldata outputs)
         external
         override
     {
-        console.log("Callback received in caller");
+        console.log("Callback done");
+    }
+
+    function coprocessorCallbackV2SupportsReason(uint16 reason) external override returns (bool) {
+        return true;
     }
 }
