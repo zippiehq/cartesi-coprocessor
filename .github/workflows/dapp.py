@@ -10,10 +10,10 @@ logger.info(f"HTTP rollup_server url is {rollup_server}")
 
 
 def handle_advance(data):
-   logger.info(f"Received advance request data {data}")
-   notice = {"payload": "0x1234"}
-   response = requests.post(rollup_server + "/notice", json=notice)
-   return "accept"
+    logger.info(f"Received advance request data {data}")
+    notice = {"payload": "0x1234"}
+    response = requests.post(rollup_server + "/notice", json=notice)
+    return "accept"
 
 
 def handle_inspect(data):

@@ -7,10 +7,19 @@ on:
   pull_request:
     branches: 
       - main   
+    
   workflow_dispatch:
+
+concurrency: 
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
   
 env:
-  DAPP_NAME: test-app
+  DAPP_NAME: test-build
   CONTRACT_NAME: MyContract
   OWNER_ADDRESS: "0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf"
   SENDER_ADDRESS: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
@@ -27,6 +36,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: recursive
+
 
       - name: Set up docker compose
         uses: docker/setup-buildx-action@v2
@@ -76,11 +86,47 @@ jobs:
 
           echo "Sanity check completed successfully."
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-            node-version: '18' 
-            
+          version: 10.6.3
+
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+            node-version: '20'
+
+      - name: Checkout CLI repository
+        uses: actions/checkout@v3
+        with:
+          repository: cartesi/cli
+          ref: feature/coprocessor-cli
+          path: cli
+      
+      - name: install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: stable
+
+      - name: install Cartesi CLI
+        run: npm install -g @cartesi/cli
+
+      - name: Install and build dependencies for cli
+        run: |
+          cd cli
+          pnpm install
+          pnpm build --filter @cartesi/cli
+
+      - name: Create Coprocessor Application Template
+        run: |
+          cd cli
+          node apps/cli/dist/index.js coprocessor create test-build --template python --branch prerelease/sdk-12
+
+      - name: Build Coprocessor Application
+        run: |
+          cd cli/test-build/app
+          node ../../apps/cli/dist/index.js build
 
       - name: Install Rust and Cargo
         uses: actions-rs/toolchain@v1
@@ -89,11 +135,6 @@ jobs:
               toolchain: stable
               override: true
   
-      - name: install Foundry
-        uses: foundry-rs/foundry-toolchain@v1
-        with:
-           version:  stable
-
       - name: Check formatting
         run: |
           cd contracts
@@ -104,39 +145,35 @@ jobs:
           cargo install cartesi-coprocessor
           cartesi-coprocessor --version
       
-      - name: Install Cartesi CLI
-        run: npm i -g @cartesi/cli
-          
-  
-      - name: create Cartesi project
-        run: |
-            cartesi-coprocessor create --dapp-name ${{ env.DAPP_NAME }} --template python
-            cd ${{ env.DAPP_NAME }}
-
       - name: Copy contract
         run: |
-          cp .github/workflows/MyContract.sol ${{ env.DAPP_NAME }}/contracts/src/MyContract.sol
-
-      - name: Copy dapp.py  app
+          cp .github/workflows/MyContract.sol cli/${{ env.DAPP_NAME }}/contracts/src/MyContract.sol
+        
+      - name: Copy dapp.py app 
         run: |
-            cp .github/workflows/dapp.py ${{ env.DAPP_NAME }}/dapp.py
+          cp .github/workflows/dapp.py cli/${{ env.DAPP_NAME }}/dapp.py
         
       - name: publish Cartesi project
         run: |
-            cd ${{ env.DAPP_NAME }}
-            cartesi-coprocessor publish --network ${{ env.NETWORK }}
+            cd cli/${{ env.DAPP_NAME }}/app
+            cartesi-coprocessor publish --network ${{ env.NETWORK }} --build false
 
       - name: get machine_hash
         id: get_hash
         run: |
-          cd ${{ env.DAPP_NAME }}
+          cd cli/${{ env.DAPP_NAME }}/app
           MACHINE_HASH=$(xxd -c 0 -p .cartesi/image/hash)
           echo "::set-output name=machine_hash::0x$MACHINE_HASH"
        
+      - name: Install forge soldeer
+        run: |
+          cd cli/${{ env.DAPP_NAME }}/contracts
+          forge soldeer install
+
       - name: Deploy Contract
         id: deploy
         run: |
-          cd ${{ env.DAPP_NAME }}/contracts
+          cd cli/${{ env.DAPP_NAME }}/contracts
           DEPLOYMENT=$(cartesi-coprocessor deploy \
             --contract-name ${{ env.CONTRACT_NAME }} \
             --network ${{ env.NETWORK }} \
@@ -174,5 +211,3 @@ jobs:
             echo "Notice not handled after 30 attempts."
             exit 1
           fi
-      
-  

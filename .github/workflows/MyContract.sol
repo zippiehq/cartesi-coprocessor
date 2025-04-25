@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
-import "../lib/coprocessor-base-contract/src/CoprocessorAdapter.sol";
+import "coprocessor-adapter-2.3.0/src/CoprocessorAdapter.sol";
 
 contract MyContract is CoprocessorAdapter {
     bool public noticeHandled;
@@ -14,7 +14,6 @@ contract MyContract is CoprocessorAdapter {
     }
 
     function handleNotice(bytes32 payloadHash, bytes memory notice) internal override {
-        
         noticeHandled = true;
     }
 
