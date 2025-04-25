@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feat/coprocessor-build-command
   pull_request:
     branches: 
       - main   
@@ -79,7 +80,38 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-            node-version: '18' 
+            node-version: '20'
+            cache: 'pnpm'
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Checkout CLI repository
+        uses: actions/checkout@v3
+        with:
+          repository: cli
+          ref: feat/coprocessor-build-command
+          path: cli
+
+      - name: Install project dependencies
+        run: |
+          cd cli
+          pnpm install
+
+      - name: Build CLI application
+        run: |
+          cd cli
+          pnpm build
+
+      - name: Create Coprocessor Application Template
+        run: |
+          cd cli/apps/cli
+          node apps/cli/dist/index.js coprocessor create test-build --template rust --branch coprocessor-integration
+
+      - name: Build Coprocessor Application
+        run: |
+          cd cli/apps/cli/test-build/coprocessor-program
+          node apps/cli/dist/index.js coprocessor build
             
 
       - name: Install Rust and Cargo
@@ -174,5 +206,3 @@ jobs:
             echo "Notice not handled after 30 attempts."
             exit 1
           fi
-      
-  
