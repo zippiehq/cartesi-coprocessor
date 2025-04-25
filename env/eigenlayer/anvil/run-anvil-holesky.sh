@@ -13,11 +13,16 @@ sleep 15
 
 cd /cartesi-lambada-coprocessor/contracts
 
+cast send \
+    --rpc-url http://0.0.0.0:8545 \
+    --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 \
+    --value 900ether 0xEc1dc4D2a9459758DCe2bb13096F303a8FAF4c92
+
 forge script \
     script/HoleskyForkCoprocessorDeployer.s.sol:HoleskyForkCoprocessorDeployer \
     --evm-version cancun \
     --rpc-url http://0.0.0.0:8545 \
-    --private-key 0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d \
+    --private-key 0xa38181ab9321e4bfdfe8dae9f99b05529483bdf0254bd5bcbcc51232f26b8c36 \
     --broadcast \
     --ffi \
     -v
