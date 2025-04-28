@@ -57,7 +57,7 @@ contract DevnetCoprocessorDeployer is CoprocessorDeployerTest {
 
         IStakeRegistryTypes.StrategyParams[] memory strategyParams = new IStakeRegistryTypes.StrategyParams[](1);
         strategyParams[0] =
-            IStakeRegistryTypes.StrategyParams({strategy: IStrategy(deployment.strategy), multiplier: 1});
+            IStakeRegistryTypes.StrategyParams({strategy: IStrategy(deployment.strategy), multiplier: 1 ether});
         setupAvsQuorums(strategyParams);
 
         deployL1L2Bridge();
@@ -74,7 +74,7 @@ contract DevnetCoprocessorDeployer is CoprocessorDeployerTest {
             sendEther(operatorAddress, 1 ether);
             registerOperatorWithEigenLayer(operator);
             mintToken(deployment.strategyToken, operatorAddress, 20 ether);
-            depositIntoStrategy(operator, deployment.strategy, 10 ether);
+            depositIntoStrategy(operator, deployment.strategy, 10);
 
             // Enable to test operator registration.
             /*
