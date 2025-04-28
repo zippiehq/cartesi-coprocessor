@@ -71,7 +71,7 @@ contract HoleskyForkCoprocessorDeployer is CoprocessorDeployerTest {
 
         IStakeRegistryTypes.StrategyParams[] memory strategyParams = new IStakeRegistryTypes.StrategyParams[](1);
         strategyParams[0] =
-            IStakeRegistryTypes.StrategyParams({strategy: IStrategy(WETH_STRATEGY_ADDRESS), multiplier: 1});
+            IStakeRegistryTypes.StrategyParams({strategy: IStrategy(WETH_STRATEGY_ADDRESS), multiplier: 1 ether});
         setupAvsQuorums(strategyParams);
 
         deployL1L2Bridge();
@@ -88,7 +88,7 @@ contract HoleskyForkCoprocessorDeployer is CoprocessorDeployerTest {
             sendEther(operatorAddress, 30 ether);
             registerOperatorWithEigenLayer(operator);
             depositWeth(WETH_ADDRESS, operator, 20 ether);
-            depositIntoStrategy(operator, WETH_STRATEGY_ADDRESS, 10 ether);
+            depositIntoStrategy(operator, WETH_STRATEGY_ADDRESS, 10);
         }
 
         // Enable to test operator registratoin.
