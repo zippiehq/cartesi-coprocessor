@@ -147,6 +147,7 @@ jobs:
       
       - name: Copy contract
         run: |
+          ls -lR cli/${{ env.DAPP_NAME }}
           cp .github/workflows/MyContract.sol cli/${{ env.DAPP_NAME }}/contracts/src/MyContract.sol
         
       - name: Copy dapp.py app 
