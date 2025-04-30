@@ -151,7 +151,7 @@ jobs:
         
       - name: Copy dapp.py app 
         run: |
-          cp .github/workflows/dapp.py cli/${{ env.DAPP_NAME }}/dapp.py
+          cp .github/workflows/dapp.py cli/${{ env.DAPP_NAME }}/app/dapp.py
         
       - name: publish Cartesi project
         run: |
