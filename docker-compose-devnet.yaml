@@ -38,6 +38,11 @@ services:
         condition: service_completed_successfully
     volumes:
       - ./operator1-data:/operator-snapshots
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:3033/health"]
+      interval: 3s
+      retries: 300
+      start_period: 5s
     environment:
       ALWAYS_CONSOLE_PUTCHAR: true
       SNAPSHOT_DIR: /operator-snapshots
@@ -88,7 +93,7 @@ services:
     depends_on:
       anvil:
         condition: service_healthy
-      setup-operator:
+      operator:
         condition: service_completed_successfully
     volumes:
       - ./config-devnet.toml:/cartesi-coprocessor-solver/config.toml
@@ -96,6 +101,11 @@ services:
       - RUST_LOG=info
     networks:
       - coprocessor-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:3034/health"]
+      interval: 3s
+      retries: 300
+      start_period: 5s
 
   llama-server:
     hostname: llama-server
