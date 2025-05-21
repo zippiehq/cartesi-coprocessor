@@ -121,7 +121,7 @@ jobs:
       - name: Create Coprocessor Application Template
         run: |
           cd cli
-          node apps/cli/dist/index.js coprocessor create test-build --template python --branch prerelease/sdk-12
+          node apps/cli/dist/index.js coprocessor create test-build --template python --branch feat/coprocessor-templates
   
       - name: Copy contract
         run: |
