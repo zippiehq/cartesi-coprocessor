@@ -60,6 +60,7 @@ services:
       - ./contracts/script/output/devnet_coprocessor_deployment.json:/operator/contracts/script/output/devnet_coprocessor_deployment.json
     environment:
       OPERATOR_BLS_KEY: ${OPERATOR_BLS_KEY:-13219903133444082589215719304558031505888625714969126489655808257015621956774}
+      MAX_GAS: 5090000
     command: >
       bash -c  "/operator/setup-operator
       --el-deployment-file-path contracts/script/output/devnet_eigenlayer_deployment.json
