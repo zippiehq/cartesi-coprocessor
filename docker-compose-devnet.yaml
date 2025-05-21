@@ -88,7 +88,7 @@ services:
     depends_on:
       anvil:
         condition: service_healthy
-      setup-operator:
+      operator:
         condition: service_completed_successfully
     volumes:
       - ./config-devnet.toml:/cartesi-coprocessor-solver/config.toml

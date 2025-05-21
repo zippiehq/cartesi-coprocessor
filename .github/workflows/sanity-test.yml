@@ -45,7 +45,7 @@ jobs:
         run: docker compose -f docker-compose-devnet.yaml pull
 
       - name: Start docker-compose service
-        run: IPFS_DAEMON_ONLINE= docker compose -f docker-compose-devnet.yaml up --wait -d || (docker compose -f docker-compose-devnet.yaml logs && false)
+        run: IPFS_DAEMON_ONLINE= docker compose -f docker-compose-devnet.yaml up --wait --wait-timeout 300 -d || (docker compose -f docker-compose-devnet.yaml logs && false)
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
 
