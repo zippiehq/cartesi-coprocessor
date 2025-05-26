@@ -84,6 +84,11 @@ services:
       POSTGRES_DB: db
     networks:
       - coprocessor-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "user", "-d", "db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   solver:
     image: ghcr.io/zippiehq/cartesi-coprocessor-solver:latest
@@ -91,10 +96,10 @@ services:
     ports:
       - 127.0.0.1:3034:3034
     depends_on:
+      operator:
+        condition: service_healthy
       anvil:
         condition: service_healthy
-      operator:
-        condition: service_completed_successfully
     volumes:
       - ./config-devnet.toml:/cartesi-coprocessor-solver/config.toml
     environment:
@@ -144,5 +149,4 @@ services:
       - AVS_SYNC_SYNC_INTERVAL=24h 
       
     networks:
-      - coprocessor-network 
-      
+      - coprocessor-network     
